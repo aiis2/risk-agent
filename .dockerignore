@@ -1,0 +1,17 @@
+node_modules
+packages/*/node_modules
+*.tsbuildinfo
+packages/*/*.tsbuildinfo
+tmp/
+plans/
+docs/
+scripts/
+test/
+services/
+*.log
+.git
+.gitignore
+dist/
+packages/web/dist/
+packages/*/dist/
+packages/desktop/

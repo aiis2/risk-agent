@@ -1,0 +1,52 @@
+{
+  "name": "risk-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Risk Agent - 智能风控主动探查系统",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:server": "pnpm --filter @risk-agent/server dev",
+    "dev:web": "pnpm --filter @risk-agent/web dev",
+    "dev:desktop": "pnpm --filter @risk-agent/desktop dev",
+    "cli:terminal": "pnpm --filter @risk-agent/server exec tsx src/cli/terminal.ts",
+    "build": "node scripts/build.mjs",
+    "build:core": "pnpm --filter @risk-agent/core build",
+    "build:server": "pnpm --filter @risk-agent/server build",
+    "build:web": "pnpm --filter @risk-agent/web build",
+    "build:desktop": "pnpm --filter @risk-agent/desktop build",
+    "build:win": "pnpm --filter @risk-agent/desktop build:win",
+    "package:desktop:portable": "node scripts/build-desktop-portable.mjs",
+    "package:desktop:portable:validated": "node scripts/build-desktop-portable.mjs --validate",
+    "build:mac": "pnpm --filter @risk-agent/desktop build:mac",
+    "build:linux": "pnpm --filter @risk-agent/desktop build:linux",
+    "test:desktop:portable": "node scripts/validate-desktop-portable.mjs",
+    "test": "vitest run",
+    "test:core": "pnpm --filter @risk-agent/core test",
+    "test:watch": "vitest",
+    "typecheck": "tsc -b --pretty",
+    "typecheck:clean": "tsc -b --clean",
+    "lint": "eslint \"packages/*/src/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"packages/*/src/**/*.{ts,tsx,json}\"",
+    "db:reset": "cd packages/server && npx tsx src/cli/db.ts reset",
+    "db:export": "cd packages/server && npx tsx src/cli/db.ts export",
+    "db:import": "cd packages/server && npx tsx src/cli/db.ts import"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.2.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "@playwright/mcp": "^0.0.71"
+  }
+}

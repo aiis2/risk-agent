@@ -1,0 +1,70 @@
+{
+  "appId": "ai.aiis2.risk-agent",
+  "productName": "Risk Agent",
+  "copyright": "Copyright © 2026 aiis2",
+  "directories": {
+    "output": "release",
+    "buildResources": "build"
+  },
+  "files": [
+    "dist/**/*",
+    "../server/dist/**/*",
+    "../core/dist/**/*",
+    "../web/dist/**/*",
+    "package.json"
+  ],
+  "extraResources": [
+    { "from": "../core/src/storage/embedded/sqlite/schema.sql", "to": "schema.sql" },
+    {
+      "from": "../../node_modules/.pnpm/@playwright+mcp@0.0.71/node_modules/@playwright/mcp",
+      "to": "playwright-mcp",
+      "filter": ["**", "!**/__tests__/**", "!**/test/**", "!**/.git/**"]
+    },
+    {
+      "from": "../../node_modules/.pnpm/playwright-core@1.60.0-alpha-2026-04-27/node_modules/playwright-core",
+      "to": "playwright-mcp/node_modules/playwright-core",
+      "filter": ["**", "!**/__tests__/**", "!**/test/**", "!**/.git/**"]
+    }
+  ],
+  "asar": true,
+  "asarUnpack": ["**/*.node"],
+  "compression": "maximum",
+  "win": {
+    "target": [{ "target": "nsis", "arch": ["x64"] }],
+    "icon": "build/icon.ico",
+    "publisherName": "aiis2",
+    "signingHashAlgorithms": ["sha256"]
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowElevation": true,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Risk Agent"
+  },
+  "mac": {
+    "target": [
+      { "target": "dmg", "arch": ["x64", "arm64"] },
+      { "target": "zip", "arch": ["x64", "arm64"] }
+    ],
+    "icon": "build/icon.icns",
+    "category": "public.app-category.developer-tools",
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "build/entitlements.mac.plist",
+    "entitlementsInherit": "build/entitlements.mac.plist",
+    "notarize": false
+  },
+  "linux": {
+    "target": [
+      { "target": "AppImage", "arch": ["x64"] },
+      { "target": "deb", "arch": ["x64"] }
+    ],
+    "icon": "build/icon.png",
+    "category": "Development",
+    "maintainer": "aiis2 <risk-agent@aiis2.local>"
+  },
+  "publish": null
+}

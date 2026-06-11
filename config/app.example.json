@@ -1,0 +1,36 @@
+{
+  "_comment": "应用主配置示例，复制为 config/app.json 后编辑",
+  "app": {
+    "name": "Risk Agent",
+    "port": 8787,
+    "nodeEnv": "production",
+    "logLevel": "info"
+  },
+  "analysis": {
+    "defaultLocale": "zh-CN",
+    "maxConcurrentSessions": 5,
+    "sessionTimeoutMs": 3600000,
+    "maxTurns": 50
+  },
+  "llm": {
+    "defaultProvider": "openai",
+    "defaultModel": "gpt-4o",
+    "maxTokensPerSession": 200000,
+    "streamingEnabled": true,
+    "rateLimitRpm": 60
+  },
+  "mcp": {
+    "connectionTimeoutMs": 10000,
+    "retryAttempts": 3,
+    "retryDelayMs": 1000
+  },
+  "storage": {
+    "configPath": "./risk_agent_data/config/storage.json",
+    "dataDir": "./risk_agent_data/data"
+  },
+  "alerts": {
+    "enabled": false,
+    "channels": [],
+    "minSeverity": "high"
+  }
+}

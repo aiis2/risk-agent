@@ -1,0 +1,5 @@
+{
+    "github.copilot.chat.localIndex.enabled": true,
+    "chat.agent.sandbox.enabled": "allowNetwork",
+    "chat.tools.terminal.blockDetectedFileWrites": "never"
+}

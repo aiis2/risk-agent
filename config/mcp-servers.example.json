@@ -1,0 +1,16 @@
+{
+  "servers": [
+    {
+      "name": "example-mcp-sse",
+      "transport": "sse",
+      "url": "http://localhost:3100/sse",
+      "enabled": true
+    },
+    {
+      "name": "example-mcp-http",
+      "transport": "http",
+      "url": "http://localhost:3101/mcp",
+      "enabled": false
+    }
+  ]
+}

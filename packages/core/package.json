@@ -1,0 +1,44 @@
+{
+  "name": "@risk-agent/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b && node ./scripts/copy-assets.mjs",
+    "dev": "tsc -b --watch",
+    "test": "vitest run",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "@kwsites/file-exists": "^1.1.1",
+    "@kwsites/promise-deferred": "^1.1.1",
+    "@simple-git/args-pathspec": "^1.0.3",
+    "@simple-git/argv-parser": "^1.1.0",
+    "better-sqlite3": "^11.0.0",
+    "debug": "^4.4.0",
+    "graphology": "^0.25.4",
+    "graphology-types": "^0.24.7",
+    "pino": "^8.19.0",
+    "simple-git": "^3.36.0",
+    "undici": "^6.11.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  }
+}

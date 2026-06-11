@@ -1,0 +1,32 @@
+{
+  "title": "风控缺口分析报告",
+  "business": "业务对象",
+  "score": "总体得分",
+  "generatedAt": "生成时间",
+  "locale": "报告语言",
+  "coverage": "规则覆盖矩阵",
+  "criticalGaps": "关键缺口",
+  "allGaps": "全部缺口",
+  "suggestions": "优化建议",
+  "none": "（无）",
+  "scenario": "场景",
+  "coveragePercent": "覆盖率",
+  "coveredRules": "已覆盖规则",
+  "ruleType": "规则类型",
+  "severity": {
+    "critical": "严重",
+    "high": "高风险",
+    "medium": "中风险",
+    "low": "低风险"
+  },
+  "gapTitle": "缺口标题",
+  "gapDescription": "说明",
+  "footer": "本报告由 Risk Agent 自动生成，仅供参考。风控规则覆盖情况可能受数据时效性影响，请结合实际业务场景进行解读。",
+  "disclaimer": "本报告不构成任何法律或合规意见。",
+  "metadata": {
+    "reportId": "报告 ID",
+    "sessionId": "会话 ID",
+    "version": "版本",
+    "engine": "分析引擎"
+  }
+}

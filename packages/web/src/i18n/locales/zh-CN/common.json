@@ -1,0 +1,841 @@
+{
+  "nav": {
+    "chat": "智能聊天",
+    "cli": "CLI 控制台",
+    "workbench": "运行工作台",
+    "runs": "运行记录",
+    "scheduledRuns": "定时运行",
+    "dashboard": "仪表盘",
+    "scenarios": "业务场景",
+    "rules": "风控规则",
+    "profiles": "业务画像",
+    "knowledgeGraph": "知识图谱",
+    "browser": "内置浏览器",
+    "newAnalysis": "新建分析",
+    "sessions": "会话管理",
+    "reports": "分析报告",
+    "settings": "系统设置",
+    "recentSessions": "历史会话",
+    "viewAllSessions": "查看全部会话",
+    "noSessions": "暂无分析记录"
+  },
+  "common": {
+    "loading": "加载中…",
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "新建",
+    "refresh": "刷新",
+    "submit": "提交",
+    "success": "成功",
+    "error": "错误",
+    "empty": "暂无数据",
+    "actions": "操作",
+    "checking": "检测中…",
+    "close": "关闭"
+  },
+  "app": {
+    "routeLoading": "正在加载页面…"
+  },
+  "kg": {
+    "tab": {
+      "overview": "总览",
+      "lineage": "规则血缘",
+      "business": "业务画像",
+      "gaps": "缺口影响"
+    },
+    "nodeType": {
+      "rule": "规则",
+      "rule_source": "规则来源",
+      "rule_system": "规则系统",
+      "scenario": "业务场景",
+      "business": "企业",
+      "profile": "业务画像",
+      "dimension": "维度",
+      "gap": "合规缺口",
+      "report": "分析报告",
+      "document": "文档"
+    },
+    "relation": {
+      "derived_from": "衍生自",
+      "belongs_to": "归属于",
+      "covers": "覆盖",
+      "references": "引用",
+      "conflicts_with": "冲突",
+      "replaces": "替换",
+      "has_profile": "有画像",
+      "has_entity": "有实体",
+      "exposes_gap": "揭示缺口"
+    },
+    "legend": {
+      "nodeTypes": "节点类型",
+      "relations": "关系类型"
+    },
+    "filters": {
+      "searchPlaceholder": "搜索节点…",
+      "filter": "过滤",
+      "selectAll": "全选",
+      "clearAll": "清空",
+      "nodeTypes": "节点类型",
+      "relations": "关系类型"
+    },
+    "detail": {
+      "viewChain": "查看血缘链路",
+      "viewImpact": "查看影响范围",
+      "goToPage": "跳转详情",
+      "attributes": "扩展属性",
+      "upstream": "上游节点",
+      "downstream": "下游节点",
+      "noRelations": "暂无关联节点",
+      "conflicts": "冲突规则",
+      "impactSummary": "影响分析"
+    },
+    "stats": {
+      "totalNodes": "总节点数",
+      "totalEdges": "总关系数",
+      "rules": "规则节点",
+      "gaps": "缺口节点",
+      "conflicts": "冲突规则"
+    },
+    "lineage": {
+      "rootHint": "点击节点查看其完整血缘链路",
+      "clearRoot": "清除根节点"
+    },
+    "backfill": "重建图谱",
+    "emptyHint": "图谱暂无数据，请先运行分析后再试"
+  },
+  "dashboard": {
+    "title": "风险覆盖一览",
+    "scenarios": "业务场景",
+    "rules": "风控规则",
+    "sessions": "历史会话",
+    "reports": "已生成报告",
+    "latestReport": "最新报告",
+    "noReport": "尚未生成报告，请前往【新建分析】",
+    "allReports": "全部报告",
+    "overallScore": "综合分",
+    "viewReport": "查看报告",
+    "reportReady": "报告已就绪",
+    "startAnalysis": "开始分析",
+    "quickActions": "快捷操作",
+    "newRun": "新建运行",
+    "manageScenarios": "管理场景",
+    "viewReports": "查看报告",
+    "smartChat": "智能对话",
+    "viewAllSessions": "全部",
+    "viewSession": "查看"
+  },
+  "browser": {
+    "eyebrow": "Session-Shared Browser",
+    "title": "Browser Workspace",
+    "description": "把任意会话绑定到同一组浏览器标签页上。这里可以创建工作区、切换共享策略、为指定会话附着工作区，并把新标签页同步到 Electron Browser Host。",
+    "prefilledSession": "已根据当前聊天会话预填 session id",
+    "openHostWindow": "打开 Browser Host",
+    "openSettings": "浏览器设置",
+    "openWorkspace": "浏览器工作区",
+    "metrics": {
+      "host": "Host",
+      "workspaces": "工作区",
+      "tabs": "标签页",
+      "bindings": "绑定"
+    },
+    "hostAvailable": "已接入",
+    "hostUnavailable": "未接入",
+    "sessionEyebrow": "Session Binding",
+    "sessionTitle": "选择或输入 session id",
+    "sessionLabel": "Session ID",
+    "sessionPlaceholder": "输入聊天 run id 或分析 session id",
+    "bindPending": "绑定中…",
+    "bindAction": "绑定当前会话工作区",
+    "recentSessions": "最近会话",
+    "noRecentSessions": "当前没有可枚举的分析会话，仍然可以手动输入聊天 run id。",
+    "workspacesEyebrow": "Workspace Index",
+    "workspacesTitle": "当前工作区",
+    "noWorkspaces": "还没有浏览器工作区。先输入一个 session id，然后绑定它的工作区。",
+    "workspaceLabel": "Workspace",
+    "visibility": {
+      "shared": "共享",
+      "exclusive": "独占"
+    },
+    "ownerLabel": "Owner",
+    "providerLabel": "Provider",
+    "tabsLabel": "Tabs",
+    "bindingsLabel": "Bindings",
+    "workspaceDetailEyebrow": "Workspace Detail",
+    "noWorkspaceSelected": "尚未选择工作区",
+    "workspaceDetailDescription": "这里可以切换共享策略、附着新会话、创建标签页，并把激活 tab 同步到 Browser Host。",
+    "workspaceDetailEmpty": "左侧选择一个工作区后，这里会显示它的标签页和绑定状态。",
+    "copied": "已复制",
+    "copyWorkspaceId": "复制 Workspace ID",
+    "sharePolicyLabel": "Share Policy",
+    "controllerLabel": "Controller",
+    "sharingTitle": "共享设置",
+    "sharePolicies": {
+      "manual": "手动附着",
+      "globalDefault": "全局默认共享"
+    },
+    "shareAction": "标记为共享工作区",
+    "attachAction": "附着到当前 session",
+    "manualSessionHint": "当前 session id 不在分析会话列表中。若这是聊天 run id，仍然可以继续绑定。",
+    "newTabTitle": "新建标签页",
+    "newTabUrlPlaceholder": "输入网址，例如 https://example.com",
+    "newTabNamePlaceholder": "可选的标签页标题",
+    "createTabAction": "创建标签页并同步到 Host",
+    "tabsEyebrow": "Tabs",
+    "tabsPanelTitle": "标签页与绑定状态",
+    "noTabs": "当前工作区还没有标签页。先在上方输入网址，创建第一张标签页。",
+    "activeTab": "当前激活",
+    "inactiveTab": "待切换",
+    "untitledTab": "未命名标签页",
+    "noUrl": "尚未记录地址",
+    "tabStatus": "状态",
+    "providerRef": "Provider Ref",
+    "contributedBy": "贡献会话",
+    "activateAction": "激活并同步",
+    "openExternally": "在浏览器中打开",
+    "bindingsPanelTitle": "当前绑定",
+    "noBindings": "当前工作区还没有活动绑定。",
+    "bindingRoles": {
+      "owner": "所有者",
+      "observer": "观察者"
+    },
+    "bindingSource": "来源",
+    "bindingControl": "可控制",
+    "yes": "是",
+    "no": "否"
+  },
+  "scenarios": {
+    "title": "业务场景管理",
+    "create": "新建场景",
+    "name": "名称",
+    "domain": "领域",
+    "status": "状态",
+    "updated": "更新时间",
+    "description": "描述",
+    "dataSources": "数据源",
+    "manualNotes": "人工备注",
+    "total": "条",
+    "statusActive": "启用",
+    "statusDraft": "草稿",
+    "statusArchived": "已归档",
+    "namePlaceholder": "如：电商支付风控",
+    "domainPlaceholder": "如：payment",
+    "descriptionPlaceholder": "业务场景的详细描述（可选）"
+  },
+  "rules": {
+    "title": "风控规则库",
+    "bizType": "业务类型",
+    "ruleType": "规则类型",
+    "riskLevel": "风险等级",
+    "source": "来源",
+    "import": "批量导入",
+    "createRule": "新建规则",
+    "ruleName": "规则名",
+    "description": "描述",
+    "tabList": "规则列表",
+    "tabImport": "导入规则",
+    "tabSystems": "系统管理",
+    "tabMatrix": "覆盖矩阵",
+    "systemName": "系统名称",
+    "systemType": "系统类型",
+    "syncUrl": "同步 API 地址",
+    "lastSync": "最后同步",
+    "sync": "同步",
+    "addSystem": "添加系统",
+    "coverageMatrix": "覆盖矩阵",
+    "dimension": "风控维度",
+    "noSystem": "暂无风控系统，请添加",
+    "ruleCount": "规则数",
+    "conditions": "触发条件",
+    "actions": "触发动作",
+    "confidence": "置信度"
+  },
+  "analysis": {
+    "title": "启动 ReAct 智能体",
+    "businessName": "业务名称",
+    "description": "业务描述",
+    "scenarioIds": "关联场景（可选）",
+    "ruleBizTypes": "规则业务类型过滤",
+    "ruleTypes": "规则类型过滤",
+    "locale": "报告语言",
+    "start": "开始分析",
+    "running": "运行中",
+    "done": "已完成",
+    "cancel": "取消",
+    "timeline": "事件时间线",
+    "resumed": "已恢复",
+    "newSession": "新建",
+    "workspaceAside": {
+      "eyebrow": "Session Workspace",
+      "title": "多会话工作台",
+      "description": "在 analyze 内直接切换已打开会话与最近记录，减少往返 Sidebar 和 Sessions。",
+      "current": "当前",
+      "closeSession": "关闭会话 {{name}}",
+      "quickOpenSession": "快速打开会话 {{name}}",
+      "totalCount": "{{count}} 条",
+      "stats": {
+        "open": "Open",
+        "running": "Running",
+        "recent": "Recent"
+      },
+      "openSessions": "已打开会话",
+      "switchToSession": "切换到会话",
+      "noOpenSessions": "当前没有其他已打开会话，开始更多分析后会自动出现在这里。",
+      "recentSessions": "最近会话",
+      "resumeSession": "恢复会话",
+      "noRecentSessions": "最近没有额外会话记录，当前分析会在完成后沉淀到这里。"
+    },
+    "signals": {
+      "researchProgress": "研究维度 {{done}}/{{total}}",
+      "compacted": "已压缩 {{count}} 次",
+      "compactReason": "，原因：{{reason}}",
+      "compactSummary": "压缩×{{count}}",
+      "nearThreshold": "接近阈值",
+      "memoryWritten": "已写入知识库：",
+      "itemCount": "{{count}} 项",
+      "done": "分析完成",
+      "viewFullReport": "查看完整报告",
+      "stepCounter": "步骤 {{current}} / {{total}}",
+      "liveProgress": "实时进度",
+      "tokens": "tokens"
+    }
+  },
+  "runWorkbench": {
+    "placeholder": "输入任务目标、补充约束，或粘贴附件开始…",
+    "creating": "创建中",
+    "startRun": "开始运行",
+    "footerHint": "发送后会创建一次新的运行",
+    "intro": "从这里直接启动一次运行，模型、工具、附件与提示词统一输入，创建后自动进入时间线详情页。",
+    "eyebrow": "运行工作台",
+    "title": "创建一次运行",
+    "preview": "预览模式",
+    "meta": "从这里发起一次运行，不预设必须走分析入口。"
+  },
+  "runs": {
+    "title": "运行记录",
+    "newRun": "新建运行",
+    "loading": "正在加载运行记录...",
+    "empty": "暂无运行记录。请先从运行工作台创建一次运行。",
+    "createdAt": "创建于 {{date}}",
+    "status": {
+      "created": "已创建",
+      "routing": "路由中",
+      "planning": "规划中",
+      "running": "运行中",
+      "waiting_user": "等待用户输入",
+      "verifying": "验证中",
+      "completed": "已完成",
+      "failed": "失败",
+      "cancelled": "已取消"
+    },
+    "taskKinds": {
+      "default": "运行",
+      "general": "通用问答",
+      "analysis": "风控分析",
+      "knowledge-query": "知识检索",
+      "skill-management": "技能管理"
+    },
+    "metrics": {
+      "turns": "{{count}} 轮",
+      "tokens": "{{input}} / {{output}} tokens",
+      "cost": "${{cost}}"
+    }
+  },
+  "runDetail": {
+    "eyebrow": "Run Detail",
+    "notFound": "Run not found.",
+    "send": "发送",
+    "sending": "发送中",
+    "placeholder": "通过消息补充引导或继续当前 run...",
+    "footerHint": "在同一 run 中追加引导、排队下一轮分析，或切换当前 follow-up 的模型与工具。",
+    "sidePanel": "Run side panel",
+    "statusAndArtifacts": "状态与产物",
+    "tabs": {
+      "artifacts": "Artifacts",
+      "metrics": "Metrics",
+      "input": "Input"
+    },
+    "metrics": {
+      "title": "Metrics",
+      "turns": "Turns",
+      "toolCalls": "Tool calls",
+      "inputTokens": "Input tokens",
+      "outputTokens": "Output tokens",
+      "estimatedCost": "Est. cost"
+    },
+    "meta": "Created {{date}} · {{kind}}",
+    "cancelling": "Cancelling...",
+    "cancelRun": "Cancel run",
+    "queueMeta": {
+      "attachments": "附件 {{count}}",
+      "tools": "工具 {{count}}"
+    },
+    "sendModes": {
+      "stopAndSend": "停止并发送",
+      "queue": "添加到队列",
+      "steer": "通过消息引导"
+    },
+    "status": {
+      "created": "已创建",
+      "queued": "已排队",
+      "running": "运行中",
+      "waiting_user": "等待用户输入",
+      "completed": "已完成",
+      "failed": "失败",
+      "cancelled": "已取消"
+    }
+  },
+  "composer": {
+    "releaseToAttach": "释放以附加文件",
+    "pendingMessages": "待发消息",
+    "remove": "移除",
+    "removeAttachment": "移除附件 {{name}}",
+    "attachFilesOrImages": "附加文件或图片",
+    "uploadAttachment": "上传附件",
+    "agentMode": "Agent",
+    "autoMode": "Auto",
+    "chooseTaskMode": "选择任务模式",
+    "taskMode": "任务模式",
+    "stopCurrentRun": "停止当前运行",
+    "stop": "停止",
+    "sendMethod": "发送方式",
+    "steerByMessageShortcut": "通过消息引导 (Alt+↵)",
+    "steerByMessage": "通过消息引导",
+    "moreSendOptions": "更多发送选项"
+  },
+  "runComposerControls": {
+    "uploadAttachment": "上传附件",
+    "selectModel": "选择模型",
+    "modelConfig": "模型配置",
+    "enabledTools": "{{count}} 个工具已启用",
+    "toolsButtonWithCount": "工具 {{count}}",
+    "configureTools": "配置工具",
+    "attachmentCountTitle": "{{count}} 个附件",
+    "attachmentCountLabel": "{{count}} 附件",
+    "attachments": "附件",
+    "closeModelConfig": "关闭模型配置",
+    "toolAllowlist": "工具白名单",
+    "selectedCount": "{{count}} 已选",
+    "closeToolAllowlist": "关闭工具白名单",
+    "searchTools": "搜索工具...",
+    "clearSearch": "清除搜索",
+    "noMatchingTools": "没有匹配的工具",
+    "noAvailableTools": "没有可用工具"
+  },
+  "workspaceShell": {
+    "sidebar": "侧边栏",
+    "expandAside": "展开{{title}}",
+    "collapseAside": "收起{{title}}"
+  },
+  "scheduledRuns": {
+    "eyebrow": "定时运行",
+    "title": "让常规风控巡检自己跑起来",
+    "description": "这里管理第一版 cron 调度。优先覆盖固定巡检、晨检汇总、知识库刷新和技能维护，不做过度自动化。",
+    "notScheduled": "未计划",
+    "loading": "正在加载调度...",
+    "empty": "还没有定时运行。先创建一个固定巡检，验证 Cron 表达式与提示词是否稳定。",
+    "nextRun": "下次执行",
+    "lastTriggered": "最近触发",
+    "createdAt": "创建于 {{date}}",
+    "lastError": "错误：{{error}}",
+    "viewLatestRun": "查看最近运行",
+    "taskTypeAria": "{{label}} 任务类型",
+    "toggleAction": "{{action}} {{name}}",
+    "fields": {
+      "name": "调度名称",
+      "cron": "Cron 表达式",
+      "taskType": "任务类型",
+      "prompt": "运行提示词",
+      "preferredModel": "首选模型"
+    },
+    "placeholders": {
+      "name": "例如：每小时支付风险摘要",
+      "prompt": "例如：分析最近五分钟的异常登录风险",
+      "preferredModel": "可选，例如 qwen3-coder-plus"
+    },
+    "summary": {
+      "total": "总数",
+      "totalHint": "已登记的调度定义",
+      "enabled": "启用中",
+      "enabledHint": "当前会继续被 cron 轮询",
+      "active": "活跃任务",
+      "activeHint": "后台执行队列仍在排队或执行"
+    },
+    "create": {
+      "title": "创建定时运行",
+      "description": "先定义周期、任务类型与提示词，之后可立即触发验证输出质量。",
+      "queueHint": "调度创建后会进入共享后台执行队列，由服务端每 15 秒轮询一次。",
+      "action": "创建定时运行"
+    },
+    "list": {
+      "title": "已登记调度",
+      "description": "优先展示下一次触发时间、最近结果和手动干预入口。",
+      "totalCount": "{{count}} 个调度"
+    },
+    "actions": {
+      "enable": "启用",
+      "disable": "停用",
+      "triggerNow": "立即触发",
+      "triggerNowAria": "立即触发 {{name}}"
+    },
+    "validation": {
+      "required": "调度名称、Cron 表达式和提示词必填。"
+    },
+    "taskKinds": {
+      "auto": "自动",
+      "general": {
+        "label": "通用问答",
+        "detail": "用于摘要、巡检与轻量整理"
+      },
+      "analysis": {
+        "label": "风控分析",
+        "detail": "适合固定巡检与问题排查"
+      },
+      "knowledge-query": {
+        "label": "知识检索",
+        "detail": "定时查规则、制度或资料"
+      },
+      "skill-management": {
+        "label": "技能管理",
+        "detail": "自动维护技能资产"
+      }
+    },
+    "status": {
+      "notTriggered": "未触发",
+      "queued": "已排队",
+      "running": "运行中",
+      "completed": "已完成",
+      "failed": "失败",
+      "cancelled": "已取消"
+    }
+  },
+  "profiles": {
+    "title": "业务画像",
+    "empty": "暂无业务画像",
+    "loading": "加载中...",
+    "loadFailed": "加载失败",
+    "generatedAfterAnalysis": "运行分析会话后自动生成",
+    "noBehaviorSteps": "暂无行为步骤",
+    "entityTypes": "实体类型（{{count}}）",
+    "noEntityTypes": "未识别到实体类型",
+    "behaviorChain": "行为风险链（{{count}} 步）",
+    "dimensionCoverage": "风控维度覆盖",
+    "noDimensions": "暂无维度数据",
+    "linkedSession": "关联分析会话",
+    "viewSession": "查看会话",
+    "knowledgeGraph": "知识图谱",
+    "viewInGraph": "在图谱中查看",
+    "back": "返回",
+    "compareVersions": "对比 v{{from}} → v{{to}}",
+    "selectOne": "从左侧选择一个业务画像查看详情",
+    "runAnalysisToGenerate": "运行新分析以生成业务画像",
+    "startAnalysis": "开始分析",
+    "diff": {
+      "loading": "对比分析中…",
+      "failed": "无法加载对比数据",
+      "title": "版本对比 · {{name}}",
+      "close": "关闭对比视图",
+      "behaviorSteps": "{{count}} 步行为",
+      "scoreDelta": "评分变化",
+      "entityChanges": "实体变化",
+      "added": "新增 ({{count}})",
+      "removed": "移除 ({{count}})",
+      "dimensionChanges": "维度覆盖变化"
+    }
+  },
+  "sessions": {
+    "title": "会话管理",
+    "allSessions": "全部",
+    "running": "运行中",
+    "completed": "已完成",
+    "error": "出错",
+    "empty": "暂无会话记录",
+    "noResults": "没有匹配的会话",
+    "sessionsRunning": "个会话正在运行",
+    "resume": "恢复查看",
+    "cancel": "取消",
+    "archive": "归档",
+    "search": "搜索会话…",
+    "filter": {
+      "all": "全部",
+      "running": "运行中",
+      "completed": "已结束",
+      "archived": "已归档"
+    },
+    "status": {
+      "running": "运行中",
+      "completed": "已完成",
+      "error": "出错",
+      "cancelled": "已取消",
+      "archived": "已归档",
+      "idle": "空闲"
+    }
+  },
+  "reports": {
+    "title": "分析报告",
+    "overallScore": "综合分",
+    "gaps": "缺失规则",
+    "gapsFound": "项",
+    "total": "份",
+    "view": "查看",
+    "export": "导出 Markdown",
+    "created": "生成时间",
+    "locale": "报告语言",
+    "coveragePercent": "覆盖率",
+    "missingRuleTypes": "缺失规则类型",
+    "coverageMatrix": "规则覆盖矩阵",
+    "lineageGraph": "血缘图谱",
+    "costSummary": "分析成本摘要",
+    "totalCost": "总费用",
+    "inputTokens": "输入 Tokens",
+    "outputTokens": "输出 Tokens",
+    "duration": "耗时",
+    "model": "模型",
+    "inputT": "输入",
+    "outputT": "输出",
+    "cost": "费用",
+    "deleteConfirm": "确认删除报告？",
+    "deleteWarning": "此操作不可撤销。",
+    "exportMd": "导出 Markdown",
+    "exportHtml": "导出 HTML",
+    "gapHistoryTrend": "历史评分趋势"
+  },
+  "settings": {
+    "title": "系统设置",
+    "storage": "存储配置",
+    "mcp": "MCP 管理",
+    "datasources": "数据源",
+    "models": "模型配置",
+    "preferences": "偏好设置",
+    "skills": "技能库",
+    "uiLocale": "界面语言",
+    "reportLocale": "报告默认语言",
+    "defaultModel": "默认模型",
+    "tabs": {
+      "general": "通用",
+      "display": "显示设置",
+      "browser": "浏览器",
+      "models": "模型",
+      "datasources": "数据源",
+      "mcp": "MCP 服务",
+      "skills": "技能",
+      "tools": "工具",
+      "agents": "自定义代理",
+      "webSearch": "网络搜索",
+      "storage": "存储",
+      "observability": "可观测性",
+      "security": "安全",
+      "desktop": "桌面应用",
+      "personas": "Persona 管理",
+      "userProfile": "用户画像"
+    },
+    "descriptions": {
+      "general": "管理界面语言与上下文轮次、压缩阈值等基础运行设置。",
+      "display": "管理主题模式、主题色、界面缩放与全局字体设置。",
+      "browser": "配置 Browser Host 路由、共享工作区策略和外部浏览器回退行为。",
+      "models": "管理模型 provider、默认模型与连通性测试。",
+      "datasources": "统一维护外部数据源、连通性和知识索引。",
+      "mcp": "按服务器维度管理 MCP 连接、健康状态和工具缓存。",
+      "skills": "查看已安装技能、导入技能包并浏览技能文件结构。",
+      "tools": "独立查看运行时工具注册表、执行分区、风险标记与输入 schema。",
+      "agents": "配置自定义代理与代理级运行能力。",
+      "storage": "维护存储后端、修订历史与迁移任务。",
+      "observability": "查看费用、追踪、性能告警与系统观测信息。",
+      "security": "查看沙盒配置、审计日志与安全策略。",
+      "desktop": "查看 Electron 应用版本、数据目录与自动更新状态。",
+      "personas": "管理 AI 助手的人格档案，不同场景自动匹配最适合的 persona。",
+      "userProfile": "查看 AI 对你的了解：偏好、特征与从对话中学到的事实。",
+      "webSearch": "配置网络搜索引擎、API 密钥与搜索行为设置。"
+    },
+    "quickTheme": {
+      "label": "快速切换主题",
+      "title": "快速切换主题：当前 {{current}}，点击切到 {{next}}",
+      "summary": "当前 {{current}}，下一个 {{next}}"
+    },
+    "themeNames": {
+      "system": "跟随系统",
+      "midnight": "Midnight",
+      "paper": "Paper",
+      "sea": "Sea"
+    },
+    "general": {
+      "sectionTitle": "常规设置",
+      "language": "语言"
+    },
+    "browser": {
+      "eyebrow": "Browser Runtime",
+      "title": "为会话绑定可共享的内置浏览器工作区",
+      "description": "这里决定 Playwright 默认优先走内置 Browser Host 还是外部浏览器，并控制工作区共享、手动附着和外部浏览器回退策略。",
+      "openWorkspace": "打开 Browser Workspace",
+      "openHostWindow": "打开 Browser Host 窗口",
+      "metrics": {
+        "host": "Host",
+        "workspaces": "工作区",
+        "tabs": "标签页",
+        "bindings": "绑定"
+      },
+      "hostAvailable": "已接入",
+      "hostUnavailable": "未接入",
+      "defaultFlowEyebrow": "Default Flow",
+      "defaultFlowTitle": "默认浏览器路由",
+      "defaultProviderLabel": "默认提供方",
+      "defaultProviderHint": "控制 Playwright 浏览器工具默认先绑定 Electron Browser Host，还是优先退回到系统外部浏览器。",
+      "providers": {
+        "embeddedFirst": "优先使用内置 Browser Host",
+        "externalPreferred": "优先使用外部浏览器",
+        "externalOnly": "仅使用外部浏览器"
+      },
+      "workspaceModeLabel": "默认工作区模式",
+      "workspaceModeHint": "独占模式隔离的是会话与标签工作区，不再单独切分浏览器资料；共享模式允许多个会话围绕同一组标签页协作。",
+      "workspaceModes": {
+        "exclusive": "独占工作区",
+        "globalShared": "全局共享工作区"
+      },
+      "sharingEyebrow": "Sharing",
+      "sharingTitle": "附着与共享权限",
+      "allowManualAttachLabel": "允许手动附着共享工作区",
+      "allowManualAttachHint": "关闭后，观察者会话只能通过默认共享策略接入，不能手动附着到指定工作区。",
+      "allowSharedContributionLabel": "允许共享观察者贡献新标签页",
+      "allowSharedContributionHint": "关闭后，共享会话只能浏览当前标签页状态，不能在共享工作区内新建或追加标签页。",
+      "externalEyebrow": "External Fallback",
+      "externalTitle": "外部浏览器回退",
+      "externalModeLabel": "回退模式",
+      "externalModes": {
+        "systemDefault": "系统默认浏览器",
+        "configured": "指定可执行文件"
+      },
+      "externalExecutableLabel": "浏览器可执行文件",
+      "externalExecutablePlaceholder": "例如 C:/Program Files/Google/Chrome/Application/chrome.exe",
+      "externalExecutableHint": "仅在“指定可执行文件”模式下生效，用于在 Browser Host 不可用时明确回退目标。"
+    },
+    "context": {
+      "title": "上下文管理",
+      "description": "控制单次分析的最大轮次与自动压缩阈值。",
+      "saved": "已自动保存",
+      "unlimitedLabel": "最大推理轮次不做限制",
+      "unlimitedHint": "开启后 Agent 将持续执行直到任务完成，不受轮次约束",
+      "toggleUnlimited": "切换无限制模式",
+      "maxTurnsLabel": "最大推理轮次 (maxTurns)",
+      "maxTurnsAria": "最大推理轮次",
+      "maxTurnsUnlimitedHint": "不限制轮次",
+      "maxTurnsHint": "每次分析最多执行多少轮 ReAct 循环（1-100）",
+      "compactThresholdLabel": "压缩阈值 Tokens (compactThreshold)",
+      "compactThresholdAria": "压缩阈值 Tokens",
+      "compactThresholdHint": "上下文 Token 数超过此阈值时触发自动压缩（默认 80,000）"
+    },
+    "display": {
+      "sections": {
+        "theme": "主题设置",
+        "zoom": "缩放设置",
+        "typography": "字体设置"
+      },
+      "themeMode": "主题模式",
+      "accentColor": "主题颜色",
+      "customColor": "自定义颜色",
+      "zoomLabel": "界面缩放",
+      "zoomHint": "调整整体界面缩放比例（70%–150%）",
+      "decreaseZoom": "减小缩放",
+      "increaseZoom": "增大缩放",
+      "resetZoom": "重置",
+      "globalFontLabel": "全局字体",
+      "globalFontHint": "设置界面全局文字字体",
+      "codeFontLabel": "代码字体",
+      "codeFontHint": "设置代码块、终端等等宽字体",
+      "themeModes": {
+        "paper": "浅色",
+        "midnight": "深色",
+        "system": "系统",
+        "sea": "Sea"
+      },
+      "fontOptions": {
+        "default": "默认",
+        "system": "系统默认",
+        "monoSystem": "系统等宽"
+      }
+    },
+    "storage": {
+      "validateSuccess": "校验通过，可应用该配置。",
+      "applySuccess": "配置已应用，新 revision 已生效。",
+      "migrateStarted": "已创建迁移任务，正在执行数据迁移。",
+      "rollbackSuccess": "回滚成功，当前已恢复到上一版存储配置。",
+      "riskFullExternal": "该切换将更换全部存储后端，影响范围广，建议先执行 dry-run 迁移。",
+      "riskHotSwap": "当前模式需要重启服务后才能完全生效。",
+      "riskDataChange": "该切换会影响后续新建会话的存储后端，不会立即修改已完成报告。",
+      "localeSwitched": "界面语言已切换",
+      "reportLocaleSwitched": "报告语言偏好已保存",
+      "translationFallback": "部分翻译资源尚未加载，已回退到默认语言",
+      "errorValidate": "候选配置校验失败",
+      "errorApply": "配置应用失败",
+      "errorRollback": "回滚失败，请改用「恢复最近 revision + 重启生效」方案。"
+    }
+  },
+  "agent": {
+    "ag2u": {
+      "title": "等待决策",
+      "reportOnly": "仅保存报告",
+      "saveKb": "写入知识库",
+      "writeGraph": "写入业务图谱",
+      "reportOnlyDesc": "分析结果仅写入报告，不影响知识库",
+      "saveKbDesc": "同时将关键发现写入结构化知识库",
+      "writeGraphDesc": "同时将业务关系写入图谱，供后续分析复用",
+      "done": "已提交："
+    }
+  },
+  "sidebar": {
+    "expandSidebar": "展开侧边栏",
+    "collapseSidebar": "折叠侧边栏",
+    "toggleLanguage": "切换语言",
+    "editNamePlaceholder": "输入名称",
+    "sessionName": "会话名称",
+    "confirmRename": "确认重命名",
+    "cancelRename": "取消重命名",
+    "resumeSession": "恢复会话",
+    "renameSession": "重命名",
+    "deleteSession": "删除"
+  },
+  "updateBanner": {
+    "downloadedTitle": "更新已就绪 v{{version}}",
+    "downloadedHint": "重启后即可安装",
+    "availableTitle": "发现新版本 v{{version}}",
+    "availableHint": "正在后台下载…",
+    "restartNow": "立即重启",
+    "downloading": "下载中",
+    "close": "关闭更新提示"
+  },
+  "mcp": {
+    "addServer": "添加服务器",
+    "editServer": "编辑 MCP 服务器",
+    "saveFirstToTest": "请先保存后再测试",
+    "healthOk": "可达",
+    "testConnection": "测试连接",
+    "refreshTools": "刷新工具列表",
+    "empty": "暂无 MCP 服务器配置",
+    "emptyHint": "添加第一个服务器以开始使用",
+    "col": {
+      "name": "名称",
+      "transport": "传输协议",
+      "health": "健康状态",
+      "tools": "工具数",
+      "enabled": "启用"
+    },
+    "fields": {
+      "name": "名称",
+      "url": "URL",
+      "transport": "传输协议",
+      "timeout": "超时 (ms)",
+      "enabled": "启用",
+      "description": "描述",
+      "headers": "自定义请求头",
+      "auth": "认证方式",
+      "retry": "重试配置"
+    },
+    "status": {
+      "healthy": "正常",
+      "degraded": "降级",
+      "unhealthy": "异常",
+      "unknown": "未知"
+    }
+  }
+}

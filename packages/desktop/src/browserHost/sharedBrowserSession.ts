@@ -1,0 +1,1 @@
+export const SHARED_BROWSER_PARTITION = 'persist:risk-agent-browser-profile';

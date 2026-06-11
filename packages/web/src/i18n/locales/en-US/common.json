@@ -1,0 +1,840 @@
+{
+  "nav": {
+    "chat": "Chat",
+    "cli": "CLI Console",
+    "workbench": "Workbench",
+    "runs": "Runs",
+    "scheduledRuns": "Scheduled Runs",
+    "dashboard": "Dashboard",
+    "scenarios": "Scenarios",
+    "rules": "Rules",
+    "profiles": "Profiles",
+    "knowledgeGraph": "Knowledge Graph",
+    "browser": "Browser Workspace",
+    "newAnalysis": "New Analysis",
+    "sessions": "Sessions",
+    "reports": "Reports",
+    "settings": "Settings",
+    "recentSessions": "Recent Sessions",
+    "viewAllSessions": "View All Sessions",
+    "noSessions": "No analysis sessions yet"
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "refresh": "Refresh",
+    "submit": "Submit",
+    "success": "Success",
+    "error": "Error",
+    "empty": "No data",
+    "actions": "Actions",
+    "checking": "Checking…",
+    "close": "Close"
+  },
+  "app": {
+    "routeLoading": "Loading page…"
+  },
+  "kg": {
+    "tab": {
+      "overview": "Overview",
+      "lineage": "Rule Lineage",
+      "business": "Business Profile",
+      "gaps": "Gap Impact"
+    },
+    "nodeType": {
+      "rule": "Rule",
+      "rule_source": "Rule Source",
+      "rule_system": "Rule System",
+      "scenario": "Scenario",
+      "business": "Business",
+      "profile": "Profile",
+      "dimension": "Dimension",
+      "gap": "Compliance Gap",
+      "report": "Report",
+      "document": "Document"
+    },
+    "relation": {
+      "derived_from": "Derived From",
+      "belongs_to": "Belongs To",
+      "covers": "Covers",
+      "references": "References",
+      "conflicts_with": "Conflicts With",
+      "replaces": "Replaces",
+      "has_profile": "Has Profile",
+      "has_entity": "Has Entity",
+      "exposes_gap": "Exposes Gap"
+    },
+    "legend": {
+      "nodeTypes": "Node Types",
+      "relations": "Relation Types"
+    },
+    "filters": {
+      "searchPlaceholder": "Search nodes…",
+      "filter": "Filter",
+      "selectAll": "All",
+      "clearAll": "Clear",
+      "nodeTypes": "Node Types",
+      "relations": "Relations"
+    },
+    "detail": {
+      "viewChain": "View Lineage Chain",
+      "viewImpact": "View Impact",
+      "goToPage": "Go to Detail",
+      "attributes": "Attributes",
+      "upstream": "Upstream",
+      "downstream": "Downstream",
+      "noRelations": "No connected nodes",
+      "conflicts": "Conflicts",
+      "impactSummary": "Impact Analysis"
+    },
+    "stats": {
+      "totalNodes": "Total Nodes",
+      "totalEdges": "Total Relations",
+      "rules": "Rule Nodes",
+      "gaps": "Gap Nodes",
+      "conflicts": "Conflicts"
+    },
+    "lineage": {
+      "rootHint": "Click a node to view its full lineage chain",
+      "clearRoot": "Clear root"
+    },
+    "backfill": "Rebuild Graph",
+    "emptyHint": "No graph data. Run an analysis session first."
+  },
+  "dashboard": {
+    "title": "Risk Coverage Overview",
+    "scenarios": "Scenarios",
+    "rules": "Rules",
+    "sessions": "Sessions",
+    "reports": "Reports",
+    "latestReport": "Latest report",
+    "noReport": "No report yet — go to [New Analysis]",
+    "allReports": "All reports",
+    "overallScore": "Overall score",
+    "viewReport": "View report",
+    "reportReady": "Report ready",
+    "startAnalysis": "Start analysis",
+    "quickActions": "Quick actions",
+    "newRun": "New run",
+    "manageScenarios": "Manage scenarios",
+    "viewReports": "View reports",
+    "smartChat": "Chat",
+    "viewAllSessions": "All",
+    "viewSession": "View"
+  },
+  "browser": {
+    "eyebrow": "Session-Shared Browser",
+    "title": "Browser Workspace",
+    "description": "Bind any session to the same set of browser tabs. Create workspaces, switch sharing policies, attach a target session, and sync new tabs into the Electron Browser Host.",
+    "prefilledSession": "Session id was prefilled from the current chat run",
+    "openHostWindow": "Open Browser Host",
+    "openSettings": "Browser settings",
+    "openWorkspace": "Browser workspace",
+    "metrics": {
+      "host": "Host",
+      "workspaces": "Workspaces",
+      "tabs": "Tabs",
+      "bindings": "Bindings"
+    },
+    "hostAvailable": "Connected",
+    "hostUnavailable": "Unavailable",
+    "sessionEyebrow": "Session Binding",
+    "sessionTitle": "Select or enter a session id",
+    "sessionLabel": "Session ID",
+    "sessionPlaceholder": "Enter a chat run id or an analysis session id",
+    "bindPending": "Binding…",
+    "bindAction": "Bind this session workspace",
+    "recentSessions": "Recent sessions",
+    "noRecentSessions": "No enumerable analysis sessions are available right now. You can still paste a chat run id manually.",
+    "workspacesEyebrow": "Workspace Index",
+    "workspacesTitle": "Current workspaces",
+    "noWorkspaces": "No browser workspace exists yet. Enter a session id first, then bind its workspace.",
+    "workspaceLabel": "Workspace",
+    "visibility": {
+      "shared": "Shared",
+      "exclusive": "Exclusive"
+    },
+    "ownerLabel": "Owner",
+    "providerLabel": "Provider",
+    "tabsLabel": "Tabs",
+    "bindingsLabel": "Bindings",
+    "workspaceDetailEyebrow": "Workspace Detail",
+    "noWorkspaceSelected": "No workspace selected yet",
+    "workspaceDetailDescription": "Switch sharing policy, attach new sessions, create tabs, and sync the active tab into Browser Host from here.",
+    "workspaceDetailEmpty": "Select a workspace on the left to inspect its tabs and live bindings.",
+    "copied": "Copied",
+    "copyWorkspaceId": "Copy workspace id",
+    "sharePolicyLabel": "Share Policy",
+    "controllerLabel": "Controller",
+    "sharingTitle": "Sharing controls",
+    "sharePolicies": {
+      "manual": "Manual attach",
+      "globalDefault": "Global default share"
+    },
+    "shareAction": "Mark as shared workspace",
+    "attachAction": "Attach to this session",
+    "manualSessionHint": "This session id is not in the analysis session list. If it is a chat run id, you can still continue.",
+    "newTabTitle": "Create a new tab",
+    "newTabUrlPlaceholder": "Enter a URL, for example https://example.com",
+    "newTabNamePlaceholder": "Optional tab title",
+    "createTabAction": "Create tab and sync to Host",
+    "tabsEyebrow": "Tabs",
+    "tabsPanelTitle": "Tabs and live bindings",
+    "noTabs": "This workspace does not have any tabs yet. Create the first tab above.",
+    "activeTab": "Active",
+    "inactiveTab": "Inactive",
+    "untitledTab": "Untitled tab",
+    "noUrl": "No URL recorded yet",
+    "tabStatus": "Status",
+    "providerRef": "Provider Ref",
+    "contributedBy": "Contributed by",
+    "activateAction": "Activate and sync",
+    "openExternally": "Open in browser",
+    "bindingsPanelTitle": "Current bindings",
+    "noBindings": "This workspace has no active bindings yet.",
+    "bindingRoles": {
+      "owner": "Owner",
+      "observer": "Observer"
+    },
+    "bindingSource": "Source",
+    "bindingControl": "Can control",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "scenarios": {
+    "title": "Business Scenarios",
+    "create": "Create scenario",
+    "name": "Name",
+    "domain": "Domain",
+    "status": "Status",
+    "updated": "Updated at",
+    "description": "Description",
+    "dataSources": "Data sources",
+    "manualNotes": "Manual notes",
+    "total": "items",
+    "statusActive": "Active",
+    "statusDraft": "Draft",
+    "statusArchived": "Archived",
+    "namePlaceholder": "e.g. Payment risk",
+    "domainPlaceholder": "e.g. payment",
+    "descriptionPlaceholder": "Detailed description (optional)"
+  },
+  "rules": {
+    "title": "Risk Rules",
+    "bizType": "Business type",
+    "ruleType": "Rule type",
+    "riskLevel": "Risk level",
+    "source": "Source",
+    "import": "Bulk import",
+    "createRule": "Create rule",
+    "ruleName": "Rule name",
+    "description": "Description",
+    "tabList": "Rule List",
+    "tabImport": "Import Rules",
+    "tabSystems": "Systems",
+    "tabMatrix": "Coverage Matrix",
+    "systemName": "System Name",
+    "systemType": "System Type",
+    "syncUrl": "Sync API URL",
+    "lastSync": "Last Sync",
+    "sync": "Sync",
+    "addSystem": "Add System",
+    "noSystem": "No rule systems yet",
+    "ruleCount": "Rule Count",
+    "conditions": "Conditions",
+    "actions": "Actions",
+    "confidence": "Confidence",
+    "coverageBizType": "Coverage Biz Type"
+  },
+  "analysis": {
+    "title": "Start ReAct agent",
+    "businessName": "Business name",
+    "description": "Description",
+    "scenarioIds": "Linked scenarios (optional)",
+    "ruleBizTypes": "Rule business-type filter",
+    "ruleTypes": "Rule-type filter",
+    "locale": "Report locale",
+    "start": "Start analysis",
+    "running": "Running",
+    "done": "Done",
+    "cancel": "Cancel",
+    "timeline": "Event timeline",
+    "resumed": "Resumed",
+    "newSession": "New",
+    "workspaceAside": {
+      "eyebrow": "Session Workspace",
+      "title": "Multi-session workspace",
+      "description": "Switch between open sessions and recent history directly in analyze, without bouncing back to the sidebar or Sessions page.",
+      "current": "Current",
+      "closeSession": "Close session {{name}}",
+      "quickOpenSession": "Open session {{name}} quickly",
+      "totalCount": "{{count}} items",
+      "stats": {
+        "open": "Open",
+        "running": "Running",
+        "recent": "Recent"
+      },
+      "openSessions": "Open sessions",
+      "switchToSession": "Switch to session",
+      "noOpenSessions": "There are no other open sessions yet. Start more analyses and they will appear here automatically.",
+      "recentSessions": "Recent sessions",
+      "resumeSession": "Resume session",
+      "noRecentSessions": "No extra recent sessions yet. The current analysis will settle here after it finishes."
+    },
+    "signals": {
+      "researchProgress": "Research dimensions {{done}}/{{total}}",
+      "compacted": "Compacted {{count}} times",
+      "compactReason": ", reason: {{reason}}",
+      "compactSummary": "Compact ×{{count}}",
+      "nearThreshold": "Near threshold",
+      "memoryWritten": "Written to knowledge base: ",
+      "itemCount": "{{count}} items",
+      "done": "Analysis complete",
+      "viewFullReport": "View full report",
+      "stepCounter": "Step {{current}} / {{total}}",
+      "liveProgress": "Live progress",
+      "tokens": "tokens"
+    }
+  },
+  "runWorkbench": {
+    "placeholder": "Enter the task goal, add constraints, or paste attachments to begin…",
+    "creating": "Creating",
+    "startRun": "Start run",
+    "footerHint": "Submitting creates a new run",
+    "intro": "Start a run directly from here with model, tools, attachments, and prompt in one place, then jump into the timeline detail page automatically.",
+    "eyebrow": "Run Workbench",
+    "title": "Create a run",
+    "preview": "Preview mode",
+    "meta": "Launch a run from here without forcing the analysis entry flow."
+  },
+  "runs": {
+    "title": "Runs",
+    "newRun": "New Run",
+    "loading": "Loading...",
+    "empty": "No runs yet. Start one from the workbench.",
+    "createdAt": "Created {{date}}",
+    "status": {
+      "created": "Created",
+      "routing": "Routing",
+      "planning": "Planning",
+      "running": "Running",
+      "waiting_user": "Waiting for user input",
+      "verifying": "Verifying",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "taskKinds": {
+      "default": "Run",
+      "general": "General Q&A",
+      "analysis": "Risk analysis",
+      "knowledge-query": "Knowledge lookup",
+      "skill-management": "Skill management"
+    },
+    "metrics": {
+      "turns": "{{count}} turns",
+      "tokens": "{{input}} / {{output}} tokens",
+      "cost": "${{cost}}"
+    }
+  },
+  "runDetail": {
+    "eyebrow": "Run Detail",
+    "notFound": "Run not found.",
+    "send": "Send",
+    "sending": "Sending",
+    "placeholder": "Add steering guidance or continue the current run via message...",
+    "footerHint": "Append guidance to the same run, queue the next analysis turn, or switch the model and tools for the current follow-up.",
+    "sidePanel": "Run side panel",
+    "statusAndArtifacts": "Status and artifacts",
+    "tabs": {
+      "artifacts": "Artifacts",
+      "metrics": "Metrics",
+      "input": "Input"
+    },
+    "metrics": {
+      "title": "Metrics",
+      "turns": "Turns",
+      "toolCalls": "Tool calls",
+      "inputTokens": "Input tokens",
+      "outputTokens": "Output tokens",
+      "estimatedCost": "Est. cost"
+    },
+    "meta": "Created {{date}} · {{kind}}",
+    "cancelling": "Cancelling...",
+    "cancelRun": "Cancel run",
+    "queueMeta": {
+      "attachments": "Attachments {{count}}",
+      "tools": "Tools {{count}}"
+    },
+    "sendModes": {
+      "stopAndSend": "Stop and send",
+      "queue": "Add to queue",
+      "steer": "Steer with message"
+    },
+    "status": {
+      "created": "Created",
+      "queued": "Queued",
+      "running": "Running",
+      "waiting_user": "Waiting for user input",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "composer": {
+    "releaseToAttach": "Release to attach files",
+    "pendingMessages": "Queued messages",
+    "remove": "Remove",
+    "removeAttachment": "Remove attachment {{name}}",
+    "attachFilesOrImages": "Attach files or images",
+    "uploadAttachment": "Upload attachment",
+    "agentMode": "Agent",
+    "autoMode": "Auto",
+    "chooseTaskMode": "Choose task mode",
+    "taskMode": "Task mode",
+    "stopCurrentRun": "Stop current run",
+    "stop": "Stop",
+    "sendMethod": "Send method",
+    "steerByMessageShortcut": "Steer with message (Alt+↵)",
+    "steerByMessage": "Steer with message",
+    "moreSendOptions": "More send options"
+  },
+  "runComposerControls": {
+    "uploadAttachment": "Upload attachment",
+    "selectModel": "Select model",
+    "modelConfig": "Model configuration",
+    "enabledTools": "{{count}} tools enabled",
+    "toolsButtonWithCount": "Tools {{count}}",
+    "configureTools": "Configure tools",
+    "attachmentCountTitle": "{{count}} attachments",
+    "attachmentCountLabel": "{{count}} attachments",
+    "attachments": "Attachments",
+    "closeModelConfig": "Close model configuration",
+    "toolAllowlist": "Tool allowlist",
+    "selectedCount": "{{count}} selected",
+    "closeToolAllowlist": "Close tool allowlist",
+    "searchTools": "Search tools...",
+    "clearSearch": "Clear search",
+    "noMatchingTools": "No matching tools",
+    "noAvailableTools": "No tools available"
+  },
+  "workspaceShell": {
+    "sidebar": "Sidebar",
+    "expandAside": "Expand {{title}}",
+    "collapseAside": "Collapse {{title}}"
+  },
+  "scheduledRuns": {
+    "eyebrow": "Scheduled Runs",
+    "title": "Let routine risk inspections run on their own",
+    "description": "Manage the first cron-based scheduler here. Focus on fixed inspections, morning summaries, knowledge refreshes, and skill maintenance without over-automating.",
+    "notScheduled": "Not scheduled",
+    "loading": "Loading schedules...",
+    "empty": "No scheduled runs yet. Create a recurring inspection first to validate the cron expression and prompt stability.",
+    "nextRun": "Next run",
+    "lastTriggered": "Last triggered",
+    "createdAt": "Created at {{date}}",
+    "lastError": "Error: {{error}}",
+    "viewLatestRun": "View latest run",
+    "taskTypeAria": "{{label}} task type",
+    "toggleAction": "{{action}} {{name}}",
+    "fields": {
+      "name": "Schedule name",
+      "cron": "Cron expression",
+      "taskType": "Task type",
+      "prompt": "Run prompt",
+      "preferredModel": "Preferred model"
+    },
+    "placeholders": {
+      "name": "For example: Hourly payment risk summary",
+      "prompt": "For example: Analyze abnormal login risk over the last five minutes",
+      "preferredModel": "Optional, for example qwen3-coder-plus"
+    },
+    "summary": {
+      "total": "Total",
+      "totalHint": "Registered schedule definitions",
+      "enabled": "Enabled",
+      "enabledHint": "Still being polled by cron",
+      "active": "Active jobs",
+      "activeHint": "Still queued or running in the background"
+    },
+    "create": {
+      "title": "Create scheduled run",
+      "description": "Define the cadence, task type, and prompt first, then trigger it immediately to validate output quality.",
+      "queueHint": "After creation, the schedule enters the shared background execution queue and is polled by the server every 15 seconds.",
+      "action": "Create scheduled run"
+    },
+    "list": {
+      "title": "Registered schedules",
+      "description": "Prioritize the next trigger time, latest result, and manual intervention entry points.",
+      "totalCount": "{{count}} schedules"
+    },
+    "actions": {
+      "enable": "Enable",
+      "disable": "Disable",
+      "triggerNow": "Trigger now",
+      "triggerNowAria": "Trigger {{name}} now"
+    },
+    "validation": {
+      "required": "Schedule name, cron expression, and prompt are required."
+    },
+    "taskKinds": {
+      "auto": "Auto",
+      "general": {
+        "label": "General Q&A",
+        "detail": "For summaries, inspections, and lightweight organization"
+      },
+      "analysis": {
+        "label": "Risk analysis",
+        "detail": "Best for fixed inspections and issue triage"
+      },
+      "knowledge-query": {
+        "label": "Knowledge lookup",
+        "detail": "Query rules, policies, or materials on a schedule"
+      },
+      "skill-management": {
+        "label": "Skill management",
+        "detail": "Maintain skill assets automatically"
+      }
+    },
+    "status": {
+      "notTriggered": "Not triggered",
+      "queued": "Queued",
+      "running": "Running",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "profiles": {
+    "title": "Profiles",
+    "empty": "No business profiles yet",
+    "loading": "Loading...",
+    "loadFailed": "Failed to load",
+    "generatedAfterAnalysis": "Generated automatically after analysis runs",
+    "noBehaviorSteps": "No behavior steps",
+    "entityTypes": "Entity types ({{count}})",
+    "noEntityTypes": "No entity types detected",
+    "behaviorChain": "Behavior risk chain ({{count}} steps)",
+    "dimensionCoverage": "Risk dimension coverage",
+    "noDimensions": "No dimension data",
+    "linkedSession": "Linked analysis session",
+    "viewSession": "View session",
+    "knowledgeGraph": "Knowledge graph",
+    "viewInGraph": "View in graph",
+    "back": "Back",
+    "compareVersions": "Compare v{{from}} → v{{to}}",
+    "selectOne": "Select a business profile from the left to view details",
+    "runAnalysisToGenerate": "Run a new analysis to generate business profiles",
+    "startAnalysis": "Start analysis",
+    "diff": {
+      "loading": "Comparing...",
+      "failed": "Unable to load comparison data",
+      "title": "Version comparison · {{name}}",
+      "close": "Close comparison view",
+      "behaviorSteps": "{{count}} behavior steps",
+      "scoreDelta": "Score delta",
+      "entityChanges": "Entity changes",
+      "added": "Added ({{count}})",
+      "removed": "Removed ({{count}})",
+      "dimensionChanges": "Dimension coverage changes"
+    }
+  },
+  "sessions": {
+    "title": "Sessions",
+    "allSessions": "All",
+    "running": "Running",
+    "completed": "Completed",
+    "error": "Error",
+    "empty": "No sessions found",
+    "noResults": "No matching sessions",
+    "sessionsRunning": "sessions running",
+    "resume": "Resume",
+    "cancel": "Cancel",
+    "archive": "Archive",
+    "search": "Search sessions…",
+    "filter": {
+      "all": "All",
+      "running": "Running",
+      "completed": "Ended",
+      "archived": "Archived"
+    },
+    "status": {
+      "running": "Running",
+      "completed": "Completed",
+      "error": "Error",
+      "cancelled": "Cancelled",
+      "archived": "Archived",
+      "idle": "Idle"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "overallScore": "Overall score",
+    "gaps": "Gaps",
+    "gapsFound": "found",
+    "total": "reports",
+    "view": "View",
+    "export": "Export Markdown",
+    "created": "Created at",
+    "locale": "Locale",
+    "coveragePercent": "Coverage",
+    "missingRuleTypes": "Missing Rule Types",
+    "coverageMatrix": "Coverage Matrix",
+    "lineageGraph": "Lineage Graph",
+    "costSummary": "Analysis Cost Summary",
+    "totalCost": "Total Cost",
+    "inputTokens": "Input Tokens",
+    "outputTokens": "Output Tokens",
+    "duration": "Duration",
+    "model": "Model",
+    "inputT": "Input",
+    "outputT": "Output",
+    "cost": "Cost",
+    "deleteConfirm": "Delete this report?",
+    "deleteWarning": "This action cannot be undone.",
+    "exportMd": "Export Markdown",
+    "exportHtml": "Export HTML",
+    "gapHistoryTrend": "Score History Trend"
+  },
+  "settings": {
+    "title": "System Settings",
+    "storage": "Storage",
+    "mcp": "MCP",
+    "datasources": "Data Sources",
+    "models": "Models",
+    "preferences": "Preferences",
+    "skills": "Skills",
+    "uiLocale": "UI language",
+    "reportLocale": "Default report language",
+    "defaultModel": "Default model",
+    "tabs": {
+      "general": "General",
+      "display": "Display",
+      "browser": "Browser",
+      "models": "Models",
+      "datasources": "Datasources",
+      "mcp": "MCP Services",
+      "skills": "Skills",
+      "tools": "Tools",
+      "agents": "Custom Agents",
+      "webSearch": "Web Search",
+      "storage": "Storage",
+      "observability": "Observability",
+      "security": "Security",
+      "desktop": "Desktop App",
+      "personas": "Personas",
+      "userProfile": "User Profile"
+    },
+    "descriptions": {
+      "general": "Manage interface language plus baseline runtime settings such as reasoning turns and compaction thresholds.",
+      "display": "Manage theme mode, accent color, interface zoom, and global font settings.",
+      "browser": "Configure Browser Host routing, shared workspace policies, and external browser fallback behavior.",
+      "models": "Manage model providers, the default model, and connectivity checks.",
+      "datasources": "Maintain external data sources, connectivity, and knowledge indexing in one place.",
+      "mcp": "Manage MCP connections, health status, and tool caches by server.",
+      "skills": "Browse installed skills, import skill packages, and inspect each skill's file tree.",
+      "tools": "Inspect the runtime tool registry, execution partitions, risk flags, and input schemas.",
+      "agents": "Configure custom agents and their runtime capabilities.",
+      "storage": "Maintain storage backends, revision history, and migration tasks.",
+      "observability": "Review costs, traces, performance alerts, and system telemetry.",
+      "security": "Review sandbox settings, audit logs, and security policies.",
+      "desktop": "Review the Electron app version, data directories, and auto-update status.",
+      "personas": "Manage AI assistant personas so each scenario can match the best-fit persona automatically.",
+      "userProfile": "Review what the AI knows about you: preferences, traits, and facts learned from conversations.",
+      "webSearch": "Configure search engines, API keys, and web-search behavior."
+    },
+    "quickTheme": {
+      "label": "Quick Theme",
+      "title": "Quick theme switch: current {{current}}, switch to {{next}}",
+      "summary": "Current {{current}}, next {{next}}"
+    },
+    "themeNames": {
+      "system": "System",
+      "midnight": "Midnight",
+      "paper": "Paper",
+      "sea": "Sea"
+    },
+    "general": {
+      "sectionTitle": "General",
+      "language": "Language"
+    },
+    "browser": {
+      "eyebrow": "Browser Runtime",
+      "title": "Bind session-aware browser workspaces to the built-in browser",
+      "description": "Choose whether Playwright prefers the embedded Browser Host or an external browser, then control workspace sharing, manual attach, and external fallback behavior.",
+      "openWorkspace": "Open Browser Workspace",
+      "openHostWindow": "Open Browser Host Window",
+      "metrics": {
+        "host": "Host",
+        "workspaces": "Workspaces",
+        "tabs": "Tabs",
+        "bindings": "Bindings"
+      },
+      "hostAvailable": "Connected",
+      "hostUnavailable": "Unavailable",
+      "defaultFlowEyebrow": "Default Flow",
+      "defaultFlowTitle": "Default browser routing",
+      "defaultProviderLabel": "Default provider",
+      "defaultProviderHint": "Controls whether Playwright browser tools bind to the Electron Browser Host first or fall back to an external browser first.",
+      "providers": {
+        "embeddedFirst": "Prefer the embedded Browser Host",
+        "externalPreferred": "Prefer an external browser",
+        "externalOnly": "Use an external browser only"
+      },
+      "workspaceModeLabel": "Default workspace mode",
+      "workspaceModeHint": "Exclusive mode separates session-to-workspace ownership and tab sets, but no longer splits browser profile data. Shared mode lets multiple sessions collaborate around the same tab set.",
+      "workspaceModes": {
+        "exclusive": "Exclusive workspace",
+        "globalShared": "Globally shared workspace"
+      },
+      "sharingEyebrow": "Sharing",
+      "sharingTitle": "Attach and share permissions",
+      "allowManualAttachLabel": "Allow manual attachment to shared workspaces",
+      "allowManualAttachHint": "When disabled, observer sessions may only join through the default sharing policy and cannot manually attach to a workspace.",
+      "allowSharedContributionLabel": "Allow shared observers to contribute new tabs",
+      "allowSharedContributionHint": "When disabled, shared sessions can inspect the current tabs but cannot create or append tabs inside that workspace.",
+      "externalEyebrow": "External Fallback",
+      "externalTitle": "External browser fallback",
+      "externalModeLabel": "Fallback mode",
+      "externalModes": {
+        "systemDefault": "System default browser",
+        "configured": "Configured executable"
+      },
+      "externalExecutableLabel": "Browser executable",
+      "externalExecutablePlaceholder": "For example C:/Program Files/Google/Chrome/Application/chrome.exe",
+      "externalExecutableHint": "Only applies in the configured executable mode, and is used when Browser Host is unavailable."
+    },
+    "context": {
+      "title": "Context Management",
+      "description": "Control the maximum reasoning turns and the auto-compaction threshold for a single analysis.",
+      "saved": "Saved automatically",
+      "unlimitedLabel": "Do not limit maximum reasoning turns",
+      "unlimitedHint": "When enabled, the agent keeps working until the task is done instead of stopping at a turn limit.",
+      "toggleUnlimited": "Toggle unlimited mode",
+      "maxTurnsLabel": "Maximum reasoning turns (maxTurns)",
+      "maxTurnsAria": "Maximum reasoning turns",
+      "maxTurnsUnlimitedHint": "Unlimited turns",
+      "maxTurnsHint": "How many ReAct loops a single analysis may run before stopping (1-100).",
+      "compactThresholdLabel": "Compaction threshold Tokens (compactThreshold)",
+      "compactThresholdAria": "Compaction threshold Tokens",
+      "compactThresholdHint": "Automatically compact context when the token count exceeds this threshold (default 80,000)."
+    },
+    "display": {
+      "sections": {
+        "theme": "Theme",
+        "zoom": "Zoom",
+        "typography": "Typography"
+      },
+      "themeMode": "Theme mode",
+      "accentColor": "Accent color",
+      "customColor": "Custom color",
+      "zoomLabel": "Interface zoom",
+      "zoomHint": "Adjust the overall interface scale (70%-150%).",
+      "decreaseZoom": "Decrease zoom",
+      "increaseZoom": "Increase zoom",
+      "resetZoom": "Reset",
+      "globalFontLabel": "Global font",
+      "globalFontHint": "Set the primary font used across the interface.",
+      "codeFontLabel": "Code font",
+      "codeFontHint": "Set the monospaced font used in code blocks and terminal surfaces.",
+      "themeModes": {
+        "paper": "Paper",
+        "midnight": "Midnight",
+        "system": "System",
+        "sea": "Sea"
+      },
+      "fontOptions": {
+        "default": "Default",
+        "system": "System default",
+        "monoSystem": "System monospace"
+      }
+    },
+    "storage": {
+      "validateSuccess": "Validation passed. You may apply this configuration.",
+      "applySuccess": "Configuration applied. New revision is now active.",
+      "migrateStarted": "Migration job created. Data migration is in progress.",
+      "rollbackSuccess": "Rollback successful. Previous storage configuration restored.",
+      "riskFullExternal": "This switch replaces all storage backends. Wide impact — run a dry-run migration first.",
+      "riskHotSwap": "This mode requires a service restart to fully take effect.",
+      "riskDataChange": "This switch affects storage for new sessions; existing completed reports are not modified.",
+      "localeSwitched": "UI language switched",
+      "reportLocaleSwitched": "Report language preference saved",
+      "translationFallback": "Some translations are not yet loaded; falling back to default language",
+      "errorValidate": "Candidate configuration validation failed",
+      "errorApply": "Failed to apply configuration",
+      "errorRollback": "Rollback failed. Try restoring the latest revision and restarting instead."
+    }
+  },
+  "agent": {
+    "ag2u": {
+      "title": "Awaiting decision",
+      "reportOnly": "Save report only",
+      "saveKb": "Write to knowledge base",
+      "writeGraph": "Write to business graph",
+      "reportOnlyDesc": "Results will only be saved to the report",
+      "saveKbDesc": "Key findings will also be written to the knowledge base",
+      "writeGraphDesc": "Business relations will also be added to the graph",
+      "done": "Submitted: "
+    }
+  },
+  "sidebar": {
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "toggleLanguage": "Switch language",
+    "editNamePlaceholder": "Enter a name",
+    "sessionName": "Session name",
+    "confirmRename": "Confirm rename",
+    "cancelRename": "Cancel rename",
+    "resumeSession": "Resume session",
+    "renameSession": "Rename",
+    "deleteSession": "Delete"
+  },
+  "updateBanner": {
+    "downloadedTitle": "Update ready v{{version}}",
+    "downloadedHint": "Restart to install",
+    "availableTitle": "New version available v{{version}}",
+    "availableHint": "Downloading in the background…",
+    "restartNow": "Restart now",
+    "downloading": "Downloading",
+    "close": "Dismiss update banner"
+  },
+  "mcp": {
+    "addServer": "Add Server",
+    "editServer": "Edit MCP Server",
+    "saveFirstToTest": "Save server first",
+    "healthOk": "Reachable",
+    "testConnection": "Test Connection",
+    "refreshTools": "Refresh Tools",
+    "empty": "No MCP servers configured",
+    "emptyHint": "Add a server to get started",
+    "col": {
+      "name": "Name",
+      "transport": "Transport",
+      "health": "Health",
+      "tools": "Tools",
+      "enabled": "Enabled"
+    },
+    "fields": {
+      "name": "Name",
+      "url": "URL",
+      "transport": "Transport",
+      "timeout": "Timeout (ms)",
+      "enabled": "Enabled",
+      "description": "Description",
+      "headers": "Custom Headers",
+      "auth": "Authentication",
+      "retry": "Retry Config"
+    },
+    "status": {
+      "healthy": "Healthy",
+      "degraded": "Degraded",
+      "unhealthy": "Unhealthy",
+      "unknown": "Unknown"
+    }
+  }
+}

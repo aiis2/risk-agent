@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # ── 后端服务（server-deployment.md §3）──────────────────────
+  server:
+    build:
+      context: ..
+      dockerfile: packages/server/Dockerfile
+      target: runtime
+    image: risk-agent/server:latest
+    container_name: risk-agent-server
+    restart: unless-stopped
+    ports:
+      - "4100:4100"   # 仅内网访问，对外由 nginx 代理
+    volumes:
+      - risk_data:/data           # 数据持久化
+      - ./config:/app/config:ro   # 配置文件（只读挂载）
+    environment:
+      NODE_ENV: production
+      RISK_AGENT_HOST: 0.0.0.0
+      RISK_AGENT_PORT: "4100"
+      RISK_AGENT_DATA_DIR: /data
+      STORAGE_CONFIG_PATH: /app/config/storage.json
+      RISK_AGENT_STORAGE_PROFILE: embedded
+      LOG_LEVEL: info
+    env_file:
+      - path: .env.production
+        required: false           # 开发环境可以不存在
+    networks:
+      - risk-net
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4100/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
+
+  # ── Nginx 反向代理 + 静态文件（server-deployment.md §3/§4）──
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: risk-agent-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro     # SSL 证书（生产环境挂载）
+      - ../packages/web/dist:/usr/share/nginx/html:ro
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - risk-net
+
+volumes:
+  risk_data:
+    driver: local
+
+networks:
+  risk-net:
+    driver: bridge

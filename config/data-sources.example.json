@@ -1,0 +1,29 @@
+{
+  "sources": [
+    {
+      "name": "my-business-api",
+      "type": "http_api",
+      "baseUrl": "https://api.example.com",
+      "auth": { "type": "bearer", "token": "your-token" },
+      "enabled": true
+    },
+    {
+      "name": "payment-service",
+      "type": "git",
+      "url": "https://github.com/your-org/payment-service.git",
+      "auth": { "type": "pat", "token": "your-pat" },
+      "enabled": false
+    },
+    {
+      "name": "risk-db",
+      "type": "mysql",
+      "connection": {
+        "host": "db.example.com",
+        "database": "risk_center",
+        "user": "readonly_user",
+        "password": ""
+      },
+      "enabled": false
+    }
+  ]
+}

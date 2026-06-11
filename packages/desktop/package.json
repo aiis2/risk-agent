@@ -1,0 +1,25 @@
+{
+  "name": "@risk-agent/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "echo desktop dev disabled in MVP",
+    "package": "electron-builder --dir",
+    "dist": "electron-builder",
+    "build:win": "node ../../scripts/build-desktop-portable.mjs",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "dependencies": {
+    "@risk-agent/server": "workspace:*",
+    "electron-updater": "^6.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.0",
+    "typescript": "^5.4.0"
+  }
+}
