@@ -1,4 +1,6 @@
-import { resolve } from 'node:path';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { packageManagerProbeTool, packageManagerWriteTool, packageProbeTool, processProbeTool, workspaceProbeTool } from '../builtin/DeveloperProbeTools.js';
 
@@ -426,92 +428,107 @@ describe('developer probe tools', () => {
   });
 
   it('creates a workspace-write local-process lease for package_manager_write', async () => {
-    const packageRoot = resolve('D:/npm_work/risk_agent');
+    const packageRoot = mkdtempSync(join(tmpdir(), 'risk-agent-package-manager-write-'));
 
-    expect(packageManagerWriteTool).toMatchObject({
-      name: 'package_manager_write',
-      isReadOnly: false,
-      sandboxHostKind: 'local-process',
-      sandboxAccessTier: 'interactive-write-capable',
-    });
+    try {
+      writeFileSync(
+        join(packageRoot, 'package.json'),
+        JSON.stringify({
+          name: 'package-manager-write-fixture',
+          private: true,
+          packageManager: 'pnpm@9.0.0',
+        }),
+        'utf8',
+      );
+      writeFileSync(join(packageRoot, 'pnpm-lock.yaml'), "lockfileVersion: '9.0'\n", 'utf8');
 
-    const execute = vi.fn().mockResolvedValue({
-      hostKind: 'local-process',
-      policy: {
+      expect(packageManagerWriteTool).toMatchObject({
+        name: 'package_manager_write',
+        isReadOnly: false,
+        sandboxHostKind: 'local-process',
+        sandboxAccessTier: 'interactive-write-capable',
+      });
+
+      const execute = vi.fn().mockResolvedValue({
         hostKind: 'local-process',
-        filesystem: 'workspace-write',
-        network: 'deny',
-        interaction: 'tty',
-      },
-      result: {
-        success: true,
-        stdout: 'dependencies updated',
-        stderr: '',
-        exitCode: 0,
-        signal: null,
-        durationMs: 28,
-      },
-    });
-    const createLease = vi.fn().mockReturnValue({
-      leaseId: 'lease-package-manager-write-1',
-      hostKind: 'local-process',
-      policy: {
-        hostKind: 'local-process',
-        filesystem: 'workspace-write',
-        network: 'deny',
-        interaction: 'tty',
-      },
-      signal: new AbortController().signal,
-      execute,
-      cancel: vi.fn(),
-    });
-
-    const result = await packageManagerWriteTool.execute(
-      {
-        operation: 'add',
-        packages: ['lodash'],
-        dev: true,
-        cwd: packageRoot,
-      },
-      {
-        sessionId: 'sess-package-manager-write-1',
-        sandboxRuntime: { createLease } as any,
-        sandboxContext: {
-          sessionId: 'sess-package-manager-write-1',
-          entrypoint: 'terminal-cli',
-          toolName: 'package_manager_write',
-          cwd: packageRoot,
-        },
-        sandboxPolicy: {
+        policy: {
           hostKind: 'local-process',
           filesystem: 'workspace-write',
           network: 'deny',
           interaction: 'tty',
         },
-      },
-    );
+        result: {
+          success: true,
+          stdout: 'dependencies updated',
+          stderr: '',
+          exitCode: 0,
+          signal: null,
+          durationMs: 28,
+        },
+      });
+      const createLease = vi.fn().mockReturnValue({
+        leaseId: 'lease-package-manager-write-1',
+        hostKind: 'local-process',
+        policy: {
+          hostKind: 'local-process',
+          filesystem: 'workspace-write',
+          network: 'deny',
+          interaction: 'tty',
+        },
+        signal: new AbortController().signal,
+        execute,
+        cancel: vi.fn(),
+      });
 
-    expect(createLease).toHaveBeenCalledWith(
-      expect.objectContaining({
-        kind: 'local-process',
+      const result = await packageManagerWriteTool.execute(
+        {
+          operation: 'add',
+          packages: ['lodash'],
+          dev: true,
+          cwd: packageRoot,
+        },
+        {
+          sessionId: 'sess-package-manager-write-1',
+          sandboxRuntime: { createLease } as any,
+          sandboxContext: {
+            sessionId: 'sess-package-manager-write-1',
+            entrypoint: 'terminal-cli',
+            toolName: 'package_manager_write',
+            cwd: packageRoot,
+          },
+          sandboxPolicy: {
+            hostKind: 'local-process',
+            filesystem: 'workspace-write',
+            network: 'deny',
+            interaction: 'tty',
+          },
+        },
+      );
+
+      expect(createLease).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'local-process',
+          command: 'pnpm',
+          args: ['add', 'lodash', '--save-dev'],
+          cwd: packageRoot,
+        }),
+        expect.objectContaining({
+          toolName: 'package_manager_write',
+        }),
+        expect.objectContaining({
+          filesystem: 'workspace-write',
+        }),
+      );
+      expect(result).toMatchObject({
+        operation: 'add',
+        packageManager: 'pnpm',
         command: 'pnpm',
         args: ['add', 'lodash', '--save-dev'],
-        cwd: packageRoot,
-      }),
-      expect.objectContaining({
-        toolName: 'package_manager_write',
-      }),
-      expect.objectContaining({
-        filesystem: 'workspace-write',
-      }),
-    );
-    expect(result).toMatchObject({
-      operation: 'add',
-      packageManager: 'pnpm',
-      command: 'pnpm',
-      args: ['add', 'lodash', '--save-dev'],
-      success: true,
-      stdout: 'dependencies updated',
-    });
+        success: true,
+        stdout: 'dependencies updated',
+      });
+    } finally {
+      rmSync(packageRoot, { recursive: true, force: true });
+    }
   });
 });
