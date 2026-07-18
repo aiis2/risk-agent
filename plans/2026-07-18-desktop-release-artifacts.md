@@ -30,7 +30,7 @@ Keep assertions focused on commands and paths; do not snapshot the full file.
 Run:
 
 ```powershell
-corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts
+corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts packages/server/src/routes/__tests__/web-ui.spec.ts
 ```
 
 Expected: failures show the current mutable install, TypeScript-only desktop
@@ -84,6 +84,11 @@ staging builder with `--skip-build`, `pnpm build:mac`, and `pnpm build:linux`.
 Upload the supported installer extensions from both output roots, name the
 bundle with `matrix.artifact_name`, and set `if-no-files-found: error`.
 
+Before upload, run `validate-desktop-release-artifacts.mjs`. Require each
+unpacked application to contain the Web UI entrypoint and the rebuilt
+`better_sqlite3.node` module, and require every platform's expected installer
+extensions to be present and non-empty.
+
 ## Task 4: Document Release Outputs
 
 **Files:**
@@ -100,7 +105,7 @@ an empty artifact set. Do not document signing secrets or internal CI details.
 Run sequentially:
 
 ```powershell
-corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts
+corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts packages/server/src/routes/__tests__/web-ui.spec.ts
 corepack pnpm typecheck
 corepack pnpm lint
 corepack pnpm test

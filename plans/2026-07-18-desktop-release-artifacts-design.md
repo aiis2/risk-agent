@@ -106,17 +106,26 @@ The repository's `packageManager` field is the single pnpm version source; the
 setup action must not declare a second version. Packaging also uses separate
 signed and unsigned steps. Empty signing secrets are never exported as
 `CSC_LINK`, because electron-builder interprets that empty value as a local
-certificate path. Unsigned runs disable identity auto-discovery, while signed
-runs receive the configured credentials. The desktop package declares the
-repository homepage required by Linux package metadata. Linux artifacts also
-use an explicit unscoped filename so the scoped npm package name cannot create
-an accidental subdirectory in the DEB output path.
+certificate path. Windows and macOS use independent certificate secrets and
+matrix gates; Linux always remains unsigned. The desktop package declares the
+repository homepage required by Linux package metadata. Linux artifacts use an
+explicit unscoped filename so the scoped npm package name cannot create an
+accidental subdirectory in the DEB output path.
+
+Native packages copy the built web application explicitly to
+`resources/web-dist`, matching the desktop runtime lookup. Static asset
+containment uses platform path semantics rather than a Windows-only separator,
+so JavaScript and CSS resolve correctly on macOS and Linux without weakening
+directory traversal protection.
 
 ### Reproducibility
 
 The install step changes from `--frozen-lockfile=false` to
 `--frozen-lockfile`. Release automation must use the exact reviewed dependency
-graph rather than mutating resolution state during packaging.
+graph rather than mutating resolution state during packaging. The Windows
+staging builder follows the same rule by creating a minimal staged workspace
+and running `pnpm install --prod --frozen-lockfile
+--config.node-linker=hoisted`; it must not run a second lockless npm resolution.
 
 ### Regression coverage
 
@@ -124,12 +133,19 @@ A focused desktop Vitest test reads the workflow as configuration and asserts
 the release contract: frozen install, four package builds, all three packaging
 commands, both artifact roots, and fatal empty uploads. This test deliberately
 checks the small set of operational invariants rather than snapshotting the
-entire YAML file.
+entire YAML file. A focused server test exercises both POSIX and Windows asset
+containment semantics.
 
 The implementation PR will also dispatch the workflow against its own branch.
 The three native jobs are the authoritative packaging validation; a job that
 cannot produce its installer is a product problem to fix, not a warning to
 skip.
+
+Before upload, each native job validates the unpacked application as well as
+the installer list. The gate requires a non-empty platform installer set,
+`resources/web-dist/index.html`, and the rebuilt `better_sqlite3.node` module.
+This catches packages that electron-builder completed but that cannot serve the
+UI or open the embedded database at runtime.
 
 ## Error Handling And Rollback
 

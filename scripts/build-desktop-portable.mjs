@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { copyFile, cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -60,13 +60,13 @@ function run(command, args, options = {}) {
   });
 }
 
-async function readJson(filePath) {
-  return JSON.parse(await readFile(filePath, 'utf8'));
-}
-
 async function writeJson(filePath, value) {
   await mkdir(dirname(filePath), { recursive: true });
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+async function readJson(filePath) {
+  return JSON.parse(await readFile(filePath, 'utf8'));
 }
 
 async function copyDir(from, to) {
@@ -75,6 +75,15 @@ async function copyDir(from, to) {
   }
 
   await cp(from, to, { recursive: true });
+}
+
+async function copyFileTo(from, to) {
+  if (!existsSync(from)) {
+    throw new Error(`required path not found: ${from}`);
+  }
+
+  await mkdir(dirname(to), { recursive: true });
+  await copyFile(from, to);
 }
 
 async function cleanupPreviousStages() {
@@ -102,61 +111,52 @@ async function cleanupPreviousStages() {
 }
 
 async function buildWorkspacePackages() {
-  const pnpm = getExecutable('pnpm');
-  await run(pnpm, ['--filter', '@risk-agent/core', 'build']);
-  await run(pnpm, ['--filter', '@risk-agent/server', 'build']);
-  await run(pnpm, ['--filter', '@risk-agent/web', 'build']);
-  await run(pnpm, ['--filter', '@risk-agent/desktop', 'build']);
+  const corepack = getExecutable('corepack');
+  await run(corepack, ['pnpm', '--filter', '@risk-agent/core', 'build']);
+  await run(corepack, ['pnpm', '--filter', '@risk-agent/server', 'build']);
+  await run(corepack, ['pnpm', '--filter', '@risk-agent/web', 'build']);
+  await run(corepack, ['pnpm', '--filter', '@risk-agent/desktop', 'build']);
 }
 
-async function prepareStage() {
-  const desktopPkg = await readJson(resolve(workspaceRoot, 'packages/desktop/package.json'));
-  const serverPkg = await readJson(resolve(workspaceRoot, 'packages/server/package.json'));
-  const corePkg = await readJson(resolve(workspaceRoot, 'packages/core/package.json'));
-
+async function prepareStageWorkspace() {
   await rm(stageDir, { recursive: true, force: true });
-  await mkdir(stageDir, { recursive: true });
+  await copyFileTo(resolve(workspaceRoot, 'package.json'), resolve(stageDir, 'package.json'));
+  await copyFileTo(resolve(workspaceRoot, 'pnpm-lock.yaml'), resolve(stageDir, 'pnpm-lock.yaml'));
+  await copyFileTo(resolve(workspaceRoot, 'pnpm-workspace.yaml'), resolve(stageDir, 'pnpm-workspace.yaml'));
 
-  await copyDir(resolve(workspaceRoot, 'packages/desktop/dist'), resolve(stageDir, 'dist'));
-  await copyDir(resolve(workspaceRoot, 'packages/desktop/build'), resolve(stageDir, 'build'));
-  await copyDir(resolve(workspaceRoot, 'packages/web/dist'), resolve(stageDir, 'web-dist'));
-  await copyDir(resolve(workspaceRoot, 'packages/server/dist'), resolve(stageDir, 'vendor/server/dist'));
-  await copyDir(resolve(workspaceRoot, 'packages/core/dist'), resolve(stageDir, 'vendor/core/dist'));
+  for (const packageName of ['core', 'server', 'web', 'desktop']) {
+    const sourcePackageDir = resolve(workspaceRoot, 'packages', packageName);
+    const stagePackageDir = resolve(stageDir, 'packages', packageName);
+    await copyFileTo(resolve(sourcePackageDir, 'package.json'), resolve(stagePackageDir, 'package.json'));
+    await copyDir(resolve(sourcePackageDir, 'dist'), resolve(stagePackageDir, 'dist'));
+  }
+  await copyDir(resolve(workspaceRoot, 'packages/desktop/build'), resolve(stageDir, 'packages/desktop/build'));
+}
+
+async function finalizeStagePackage() {
+  const desktopPackage = await readJson(resolve(stageDir, 'packages/desktop/package.json'));
+  const electronUpdaterPackage = await readJson(resolve(stageDir, 'node_modules/electron-updater/package.json'));
+
+  await copyDir(resolve(stageDir, 'packages/desktop/dist'), resolve(stageDir, 'dist'));
+  await copyDir(resolve(stageDir, 'packages/desktop/build'), resolve(stageDir, 'build'));
+  await copyDir(resolve(stageDir, 'packages/web/dist'), resolve(stageDir, 'web-dist'));
+  await copyFileTo(
+    resolve(stageDir, 'packages/core/dist/storage/embedded/sqlite/schema.sql'),
+    resolve(stageDir, 'schema.sql'),
+  );
 
   await writeJson(resolve(stageDir, 'package.json'), {
-    name: desktopPkg.name,
-    version: desktopPkg.version,
+    name: 'risk-agent-desktop-stage',
+    version: desktopPackage.version,
     private: true,
-    description: 'Risk Agent desktop staging package',
-    author: 'aiis2',
+    description: desktopPackage.description,
+    author: desktopPackage.author,
+    homepage: desktopPackage.homepage,
     main: './dist/main.js',
     dependencies: {
-      '@risk-agent/server': 'file:./vendor/server',
-      'electron-updater': desktopPkg.dependencies['electron-updater'],
+      '@risk-agent/server': desktopPackage.version,
+      'electron-updater': electronUpdaterPackage.version,
     },
-  });
-
-  await writeJson(resolve(stageDir, 'vendor/server/package.json'), {
-    name: serverPkg.name,
-    version: serverPkg.version,
-    private: true,
-    type: serverPkg.type,
-    main: serverPkg.main,
-    dependencies: {
-      ...serverPkg.dependencies,
-      '@risk-agent/core': 'file:../core',
-    },
-  });
-
-  await writeJson(resolve(stageDir, 'vendor/core/package.json'), {
-    name: corePkg.name,
-    version: corePkg.version,
-    private: true,
-    type: corePkg.type,
-    main: corePkg.main,
-    types: corePkg.types,
-    exports: corePkg.exports,
-    dependencies: corePkg.dependencies,
   });
 
   await writeJson(resolve(stageDir, 'electron-builder.json'), {
@@ -169,7 +169,20 @@ async function prepareStage() {
       buildResources: 'build',
     },
     files: ['dist/**/*', 'node_modules/**/*', 'package.json'],
-    extraResources: [{ from: 'web-dist', to: 'web-dist' }],
+    extraResources: [
+      { from: 'schema.sql', to: 'schema.sql' },
+      { from: 'web-dist', to: 'web-dist' },
+      {
+        from: 'node_modules/@playwright/mcp',
+        to: 'playwright-mcp',
+        filter: ['**', '!**/__tests__/**', '!**/test/**', '!**/.git/**'],
+      },
+      {
+        from: 'node_modules/playwright-core',
+        to: 'playwright-mcp/node_modules/playwright-core',
+        filter: ['**', '!**/__tests__/**', '!**/test/**', '!**/.git/**'],
+      },
+    ],
     asar: true,
     asarUnpack: ['**/*.node'],
     compression: 'normal',
@@ -183,8 +196,8 @@ async function prepareStage() {
 }
 
 async function installStageDependencies() {
-  const npm = getExecutable('npm');
-  await run(npm, ['install', '--omit=dev', '--ignore-scripts'], {
+  const corepack = getExecutable('corepack');
+  await run(corepack, ['pnpm', '--filter', '@risk-agent/desktop...', 'install', '--prod', '--frozen-lockfile', '--config.node-linker=hoisted', '--ignore-scripts'], {
     cwd: stageDir,
     env: {
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1',
@@ -213,8 +226,9 @@ async function main() {
   if (shouldBuildWorkspace) {
     await buildWorkspacePackages();
   }
-  await prepareStage();
+  await prepareStageWorkspace();
   await installStageDependencies();
+  await finalizeStagePackage();
   await buildPortable();
 
   const artifactPath = join(stageDir, 'release', 'Risk Agent 0.1.0.exe');

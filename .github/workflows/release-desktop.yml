@@ -19,15 +19,19 @@ jobs:
           - os: windows-latest
             artifact_name: windows-portable
             package_command: node scripts/build-desktop-portable.mjs --skip-build
+            signing_platform: windows
           - os: macos-latest
             artifact_name: macos
             package_command: pnpm build:mac
+            signing_platform: macos
           - os: ubuntu-latest
             artifact_name: linux
             package_command: pnpm build:linux
+            signing_platform: none
     runs-on: ${{ matrix.os }}
     env:
-      SIGNING_ENABLED: ${{ secrets.CSC_LINK != '' }}
+      WINDOWS_SIGNING_ENABLED: ${{ secrets.WIN_CSC_LINK != '' }}
+      MACOS_SIGNING_ENABLED: ${{ secrets.MAC_CSC_LINK != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -51,22 +55,36 @@ jobs:
           pnpm --filter @risk-agent/desktop build
 
       - name: Package desktop (unsigned)
-        if: env.SIGNING_ENABLED != 'true'
+        if: >-
+          matrix.signing_platform == 'none' ||
+          (matrix.signing_platform == 'windows' && env.WINDOWS_SIGNING_ENABLED != 'true') ||
+          (matrix.signing_platform == 'macos' && env.MACOS_SIGNING_ENABLED != 'true')
         run: ${{ matrix.package_command }}
         env:
           DEBUG: electron-builder
           CSC_IDENTITY_AUTO_DISCOVERY: false
 
-      - name: Package desktop (signed)
-        if: env.SIGNING_ENABLED == 'true'
+      - name: Package desktop (signed Windows)
+        if: matrix.signing_platform == 'windows' && env.WINDOWS_SIGNING_ENABLED == 'true'
         run: ${{ matrix.package_command }}
         env:
           DEBUG: electron-builder
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+
+      - name: Package desktop (signed macOS)
+        if: matrix.signing_platform == 'macos' && env.MACOS_SIGNING_ENABLED == 'true'
+        run: ${{ matrix.package_command }}
+        env:
+          DEBUG: electron-builder
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Validate packaged desktop
+        run: node scripts/validate-desktop-release-artifacts.mjs
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
