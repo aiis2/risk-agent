@@ -107,7 +107,7 @@ corepack pnpm build
 git diff --check
 ```
 
-Expected: every command exits zero; the full workspace reports all 98 test
+Expected: every command exits zero; the full workspace reports all 99 test
 files and all tests passing.
 
 **Step 2: Verify manifests and lockfile are unchanged**
