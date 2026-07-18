@@ -30,22 +30,27 @@ Keep assertions focused on commands and paths; do not snapshot the full file.
 Run:
 
 ```powershell
-corepack pnpm --filter @risk-agent/desktop test -- releaseWorkflow.spec.ts
+corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts packages/server/src/routes/__tests__/web-ui.spec.ts
 ```
 
 Expected: failures show the current mutable install, TypeScript-only desktop
 build, missing Windows staging upload, and warning-only empty artifact policy.
 
-## Task 2: Avoid Duplicate Windows Workspace Builds
+## Task 2: Avoid Duplicate Native Workspace Builds
 
 **Files:**
-- Modify: `scripts/build-desktop-portable.mjs`
+- Modify: `scripts/build-desktop-release.mjs`
 
 **Step 1: Add an opt-in skip flag**
 
 Recognize `--skip-build` in `main()`. Only bypass
 `buildWorkspacePackages()` when that flag is present. Preserve the current
 default and the independent `--validate` option.
+
+After the local server build, refresh injected workspace dependencies with an
+offline frozen install before compiling desktop. Route the package-level macOS
+and Linux distribution scripts through this same staged builder so local and CI
+release entrypoints keep one artifact contract.
 
 **Step 2: Verify default and CI modes**
 
@@ -73,16 +78,30 @@ pnpm install --frozen-lockfile
 **Step 3: Build all workspace outputs once**
 
 Build core, server, web, and desktop in that order before packaging.
+After the server build, refresh the injected workspace packages with an offline
+frozen install so a clean runner exposes the generated server entrypoint to the
+desktop build.
 
 **Step 4: Run the matrix packaging command**
 
-Run the static `matrix.package_command` value. The commands must be the Windows
-staging builder with `--skip-build`, `pnpm build:mac`, and `pnpm build:linux`.
+Run the static `matrix.package_command` value. Each platform invokes the native
+release builder with `--skip-build` and its explicit platform argument so all
+three packages consume the same hoisted frozen production stage.
 
 **Step 5: Enforce the artifact contract**
 
 Upload the supported installer extensions from both output roots, name the
 bundle with `matrix.artifact_name`, and set `if-no-files-found: error`.
+
+Before upload, run `validate-desktop-release-artifacts.mjs`. Require each
+unpacked application to contain the Web UI entrypoint and the rebuilt
+`better_sqlite3.node` module, and require every platform's expected installer
+extensions to be present and non-empty. Run the host-compatible packaged
+Electron executable in Node mode and require an in-memory SQLite query to pass;
+on macOS, also validate the native-module architecture for every target.
+Build macOS x64 and arm64 serially from separate copies of the production stage
+so their native dependency rebuilds and hard-linked application files cannot
+share the same inode tree.
 
 ## Task 4: Document Release Outputs
 
@@ -100,7 +119,7 @@ an empty artifact set. Do not document signing secrets or internal CI details.
 Run sequentially:
 
 ```powershell
-corepack pnpm --filter @risk-agent/desktop test -- releaseWorkflow.spec.ts
+corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts packages/server/src/routes/__tests__/web-ui.spec.ts
 corepack pnpm typecheck
 corepack pnpm lint
 corepack pnpm test
@@ -126,6 +145,8 @@ gh workflow run release-desktop.yml --repo aiis2/risk-agent --ref <branch>
 
 Wait for the run, inspect all three jobs, and list artifact names and sizes.
 Do not merge while any platform job fails or uploads no supported installer.
+On macOS, require the x64 package to contain an x86_64 SQLite module and the
+arm64 package to contain an arm64 module.
 
 ## Task 7: Review And Publish
 

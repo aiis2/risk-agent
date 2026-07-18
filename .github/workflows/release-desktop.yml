@@ -15,22 +15,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            artifact_name: windows-portable
+            package_command: node scripts/build-desktop-release.mjs --skip-build --platform=windows
+            signing_platform: windows
+          - os: macos-latest
+            artifact_name: macos
+            package_command: node scripts/build-desktop-release.mjs --skip-build --platform=macos
+            signing_platform: macos
+          - os: ubuntu-latest
+            artifact_name: linux
+            package_command: node scripts/build-desktop-release.mjs --skip-build --platform=linux
+            signing_platform: none
     runs-on: ${{ matrix.os }}
     env:
-      # 统一把 GitHub secrets 映射为 electron-builder 识别的变量
-      CSC_LINK: ${{ secrets.CSC_LINK }}
-      CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      WINDOWS_SIGNING_ENABLED: ${{ secrets.WIN_CSC_LINK != '' }}
+      MACOS_SIGNING_ENABLED: ${{ secrets.MAC_CSC_LINK != '' }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -39,28 +45,62 @@ jobs:
           cache: 'pnpm'
 
       - name: Install
-        run: pnpm install --frozen-lockfile=false
+        run: pnpm install --frozen-lockfile
 
-      - name: Build core/server/web
+      - name: Build workspace packages
         run: |
           pnpm --filter @risk-agent/core build
           pnpm --filter @risk-agent/server build
+          pnpm install --offline --frozen-lockfile
           pnpm --filter @risk-agent/web build
+          pnpm --filter @risk-agent/desktop build
 
-      - name: Build desktop (signed if secrets present)
-        run: pnpm --filter @risk-agent/desktop build
+      - name: Package desktop (unsigned)
+        if: >-
+          matrix.signing_platform == 'none' ||
+          (matrix.signing_platform == 'windows' && env.WINDOWS_SIGNING_ENABLED != 'true') ||
+          (matrix.signing_platform == 'macos' && env.MACOS_SIGNING_ENABLED != 'true')
+        run: ${{ matrix.package_command }}
         env:
-          # electron-builder 会根据 CSC_LINK 自动决定是否签名
           DEBUG: electron-builder
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Package desktop (signed Windows)
+        if: matrix.signing_platform == 'windows' && env.WINDOWS_SIGNING_ENABLED == 'true'
+        run: ${{ matrix.package_command }}
+        env:
+          DEBUG: electron-builder
+          CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+
+      - name: Package desktop (signed macOS)
+        if: matrix.signing_platform == 'macos' && env.MACOS_SIGNING_ENABLED == 'true'
+        run: ${{ matrix.package_command }}
+        env:
+          DEBUG: electron-builder
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Validate packaged desktop
+        run: node scripts/validate-desktop-release-artifacts.mjs
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: risk-agent-${{ matrix.os }}
+          name: risk-agent-${{ matrix.artifact_name }}
           path: |
-            packages/desktop/release/**/*.exe
-            packages/desktop/release/**/*.dmg
-            packages/desktop/release/**/*.zip
-            packages/desktop/release/**/*.AppImage
-            packages/desktop/release/**/*.deb
-          if-no-files-found: warn
+            tmp/npm-desktop-stage-*/release/*.exe
+            tmp/npm-desktop-stage-*/release/*.dmg
+            tmp/npm-desktop-stage-*/release/*.zip
+            tmp/npm-desktop-stage-*/release/*.AppImage
+            tmp/npm-desktop-stage-*/release/*.deb
+            packages/desktop/release/*.exe
+            packages/desktop/release/*.dmg
+            packages/desktop/release/*.zip
+            packages/desktop/release/*.AppImage
+            packages/desktop/release/*.deb
+          if-no-files-found: error
+          retention-days: 14

@@ -84,6 +84,8 @@ pnpm build                       # Build all packages
 pnpm build:web                   # Build web package
 pnpm build:server                # Build server package
 pnpm package:desktop:portable    # Build desktop portable artifact
+pnpm build:mac                   # Build staged macOS DMG/ZIP artifacts
+pnpm build:linux                 # Build staged Linux AppImage/DEB artifacts
 ```
 
 ## Configuration
@@ -164,7 +166,15 @@ Build package artifacts with:
 ```bash
 pnpm build
 pnpm package:desktop:portable
+pnpm build:mac
+pnpm build:linux
 ```
+
+Every native distribution command creates a frozen hoisted production stage
+and writes its installers under `tmp/npm-desktop-stage-*/release`. macOS uses
+independent x64 and arm64 stages so native dependency rebuilds cannot affect
+the other architecture. The desktop release workflow validates the packaged
+runtime and fails when a job produces no supported installer.
 
 For service deployment, use the Compose and nginx examples in `docker/` as a
 starting point. Keep production secrets in your platform secret manager or

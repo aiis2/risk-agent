@@ -71,36 +71,76 @@ repair it.
 The matrix remains on `windows-latest`, `macos-latest`, and `ubuntu-latest`, but
 each entry also declares a stable artifact label and a packaging command:
 
-- Windows runs `node scripts/build-desktop-portable.mjs --skip-build`.
-- macOS runs `pnpm build:mac`.
-- Linux runs `pnpm build:linux`.
+- Windows runs `node scripts/build-desktop-release.mjs --skip-build --platform=windows`.
+- macOS runs `node scripts/build-desktop-release.mjs --skip-build --platform=macos`.
+- Linux runs `node scripts/build-desktop-release.mjs --skip-build --platform=linux`.
 
 Before packaging, the workflow explicitly builds core, server, web, and
-desktop output in dependency order. The Windows builder gains the narrow
-`--skip-build` option so it can prepare its standalone stage without rebuilding
-the same workspace packages a second time. Local invocations keep their current
-behavior and still build prerequisites by default.
+desktop output in dependency order. Every native target uses the same concrete
+hoisted production stage, avoiding pnpm workspace symlinks that electron-builder
+cannot reliably traverse. The release builder accepts `--skip-build` so CI can
+reuse the workspace output. Local invocations keep their current behavior and
+still build prerequisites by default.
 
 ### Artifact contract
 
 The upload action accepts the existing platform extensions from both output
 roots:
 
-- `tmp/npm-desktop-stage-*/release/**/*.exe`
-- `packages/desktop/release/**/*.exe`
-- `packages/desktop/release/**/*.dmg`
-- `packages/desktop/release/**/*.zip`
-- `packages/desktop/release/**/*.AppImage`
-- `packages/desktop/release/**/*.deb`
+- `tmp/npm-desktop-stage-*/release/*.exe`
+- `tmp/npm-desktop-stage-*/release/*.dmg`
+- `tmp/npm-desktop-stage-*/release/*.zip`
+- `tmp/npm-desktop-stage-*/release/*.AppImage`
+- `tmp/npm-desktop-stage-*/release/*.deb`
+- `packages/desktop/release/*.exe`
+- `packages/desktop/release/*.dmg`
+- `packages/desktop/release/*.zip`
+- `packages/desktop/release/*.AppImage`
+- `packages/desktop/release/*.deb`
+
+Only top-level installer files are uploaded. In particular, the Windows glob
+must not collect executables from electron-builder's `win-unpacked` directory,
+which would create an incomplete and misleading artifact bundle.
 
 `if-no-files-found` becomes `error`. This converts the core invariant from a
 best-effort warning into a release gate.
+
+### Native runner refinements
+
+The repository's `packageManager` field is the single pnpm version source; the
+setup action must not declare a second version. Packaging also uses separate
+signed and unsigned steps. Empty signing secrets are never exported as
+`CSC_LINK`, because electron-builder interprets that empty value as a local
+certificate path. Windows and macOS use independent certificate secrets and
+matrix gates; Linux always remains unsigned. The desktop package declares the
+repository homepage required by Linux package metadata. Linux artifacts use an
+explicit unscoped filename so the scoped npm package name cannot create an
+accidental subdirectory in the DEB output path.
+
+Native packages copy the built web application explicitly to
+`resources/web-dist`, matching the desktop runtime lookup. Static asset
+containment uses platform path semantics rather than a Windows-only separator,
+so JavaScript and CSS resolve correctly on macOS and Linux without weakening
+directory traversal protection.
 
 ### Reproducibility
 
 The install step changes from `--frozen-lockfile=false` to
 `--frozen-lockfile`. Release automation must use the exact reviewed dependency
-graph rather than mutating resolution state during packaging.
+graph rather than mutating resolution state during packaging. The native
+release builder follows the same rule by creating a minimal staged workspace
+and running `pnpm install --prod --frozen-lockfile
+--config.node-linker=hoisted`; it must not run a second lockless npm resolution.
+The staged MCP resource is copied once with its own compatible nested
+`playwright-core`; overlapping resource mappings are forbidden because Unix
+packagers reject duplicate destinations.
+The desktop's injected server dependency is refreshed offline after the server
+build so a clean install snapshots the generated `dist` entrypoint before the
+desktop typecheck and native packaging steps.
+This refresh also runs in the builder's default local compilation path, not
+only in CI. Package-level Windows, macOS, and Linux distribution scripts all
+delegate to the staged builder; direct electron-builder commands cannot bypass
+the frozen production graph or macOS architecture isolation.
 
 ### Regression coverage
 
@@ -108,12 +148,30 @@ A focused desktop Vitest test reads the workflow as configuration and asserts
 the release contract: frozen install, four package builds, all three packaging
 commands, both artifact roots, and fatal empty uploads. This test deliberately
 checks the small set of operational invariants rather than snapshotting the
-entire YAML file.
+entire YAML file. A focused server test exercises both POSIX and Windows asset
+containment semantics.
 
 The implementation PR will also dispatch the workflow against its own branch.
 The three native jobs are the authoritative packaging validation; a job that
 cannot produce its installer is a product problem to fix, not a warning to
 skip.
+
+Before upload, each native job validates the unpacked application as well as
+the installer list. The gate requires a non-empty platform installer set,
+`resources/web-dist/index.html`, and the rebuilt `better_sqlite3.node` module.
+The host-compatible unpacked Electron executable must also load that packaged
+module and complete an in-memory SQLite query. macOS additionally checks every
+targeted native binary architecture, including the package that cannot execute
+on the runner host. This catches packages that electron-builder completed but
+that cannot serve the UI or open the embedded database at runtime.
+
+electron-builder rebuilds native dependencies in the staged `node_modules`
+tree and may hard-link those files into the unpacked application. Building x64
+and arm64 from one stage lets the later arm64 rebuild mutate the already-built
+x64 application through the shared inode, even when the builder processes run
+serially. The macOS release builder therefore copies the frozen production
+stage once per architecture, then invokes electron-builder serially against
+each independent tree.
 
 ## Error Handling And Rollback
 
@@ -130,8 +188,8 @@ defect is investigated.
 
 1. Add the workflow contract test and record its failures against the current
    TypeScript-only build, mutable install, and warning-only upload.
-2. Add `--skip-build` to the Windows staging builder without changing default
-   local behavior.
+2. Add `--skip-build` and platform targeting to the native release builder
+   without changing default local behavior.
 3. Update the workflow matrix, package builds, upload paths, and failure mode.
 4. Run the focused test, typecheck, lint, and the full Vitest workspace.
 5. Build and validate the Windows portable artifact locally.

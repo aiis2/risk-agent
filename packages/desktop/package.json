@@ -2,19 +2,27 @@
   "name": "@risk-agent/desktop",
   "version": "0.1.0",
   "private": true,
+  "description": "Desktop client for the Risk Agent risk analysis platform.",
+  "author": "aiis2",
+  "homepage": "https://github.com/aiis2/risk-agent",
   "main": "./dist/main.js",
   "scripts": {
     "build": "tsc -b",
     "dev": "echo desktop dev disabled in MVP",
     "package": "electron-builder --dir",
     "dist": "electron-builder",
-    "build:win": "node ../../scripts/build-desktop-portable.mjs",
-    "build:mac": "electron-builder --mac",
-    "build:linux": "electron-builder --linux"
+    "build:win": "node ../../scripts/build-desktop-release.mjs --platform=windows",
+    "build:mac": "node ../../scripts/build-desktop-release.mjs --platform=macos",
+    "build:linux": "node ../../scripts/build-desktop-release.mjs --platform=linux"
   },
   "dependencies": {
     "@risk-agent/server": "workspace:*",
     "electron-updater": "^6.3.0"
+  },
+  "dependenciesMeta": {
+    "@risk-agent/server": {
+      "injected": true
+    }
   },
   "devDependencies": {
     "@types/node": "^24.13.0",

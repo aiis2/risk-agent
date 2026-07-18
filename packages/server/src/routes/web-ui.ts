@@ -1,6 +1,14 @@
 import type { FastifyInstance } from 'fastify';
 import { createReadStream, existsSync, statSync } from 'node:fs';
+import * as nodePath from 'node:path';
 import { extname, join, resolve } from 'node:path';
+
+type PathSemantics = {
+  isAbsolute(path: string): boolean;
+  relative(from: string, to: string): string;
+  resolve(...paths: string[]): string;
+  sep: string;
+};
 
 const MIME_TYPES: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
@@ -63,9 +71,7 @@ function resolveAssetPath(webDistDir: string, pathname: string): string | undefi
   }
 
   const candidate = resolve(webDistDir, `.${pathname}`);
-  const normalizedRoot = `${resolve(webDistDir)}\\`;
-  const normalizedCandidate = resolve(candidate);
-  if (normalizedCandidate !== resolve(webDistDir) && !normalizedCandidate.startsWith(normalizedRoot)) {
+  if (!isPathInside(webDistDir, candidate)) {
     return undefined;
   }
 
@@ -78,4 +84,16 @@ function resolveAssetPath(webDistDir: string, pathname: string): string | undefi
   } catch {
     return undefined;
   }
+}
+
+export function isPathInside(rootPath: string, candidatePath: string, pathSemantics: PathSemantics = nodePath): boolean {
+  const relativePath = pathSemantics.relative(
+    pathSemantics.resolve(rootPath),
+    pathSemantics.resolve(candidatePath),
+  );
+
+  return relativePath.length > 0
+    && relativePath !== '..'
+    && !relativePath.startsWith(`..${pathSemantics.sep}`)
+    && !pathSemantics.isAbsolute(relativePath);
 }
