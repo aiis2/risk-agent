@@ -47,6 +47,11 @@ Recognize `--skip-build` in `main()`. Only bypass
 `buildWorkspacePackages()` when that flag is present. Preserve the current
 default and the independent `--validate` option.
 
+After the local server build, refresh injected workspace dependencies with an
+offline frozen install before compiling desktop. Route the package-level macOS
+and Linux distribution scripts through this same staged builder so local and CI
+release entrypoints keep one artifact contract.
+
 **Step 2: Verify default and CI modes**
 
 Use a pinned pnpm 9 environment. Confirm a normal local invocation still builds

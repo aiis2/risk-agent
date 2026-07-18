@@ -38,6 +38,9 @@ describe('desktop release workflow', () => {
 
   it('installs the Windows production graph from the frozen pnpm lockfile', () => {
     const releaseBuilder = readFileSync(releaseBuilderPath, 'utf8');
+    const workspaceBuild = releaseBuilder.match(
+      /async function buildWorkspacePackages\(\) \{[\s\S]*?\n\}/,
+    )?.[0] ?? '';
 
     expect(releaseBuilder).toContain("getExecutable('corepack')");
     expect(releaseBuilder).toContain("'install', '--prod', '--frozen-lockfile'");
@@ -46,6 +49,13 @@ describe('desktop release workflow', () => {
     expect(releaseBuilder).toContain("platformName === 'linux'");
     expect(releaseBuilder).not.toContain("['install', '--omit=dev'");
     expect(releaseBuilder).not.toContain("from: 'node_modules/playwright-core'");
+    expect(workspaceBuild).toContain("'install', '--offline', '--frozen-lockfile'");
+
+    const serverBuildIndex = workspaceBuild.indexOf("'@risk-agent/server', 'build'");
+    const injectionRefreshIndex = workspaceBuild.indexOf("'install', '--offline', '--frozen-lockfile'");
+    const desktopBuildIndex = workspaceBuild.indexOf("'@risk-agent/desktop', 'build'");
+    expect(serverBuildIndex).toBeLessThan(injectionRefreshIndex);
+    expect(injectionRefreshIndex).toBeLessThan(desktopBuildIndex);
   });
 
   it('packages each macOS architecture from an isolated stage', () => {
@@ -87,6 +97,7 @@ describe('desktop release workflow', () => {
     const desktopPackage = JSON.parse(readFileSync(desktopPackagePath, 'utf8')) as {
       dependenciesMeta?: Record<string, { injected?: boolean }>;
       homepage?: string;
+      scripts?: Record<string, string>;
     };
     const builderConfig = JSON.parse(readFileSync(electronBuilderConfigPath, 'utf8')) as {
       extraResources?: Array<{ from?: string; to?: string }>;
@@ -95,6 +106,12 @@ describe('desktop release workflow', () => {
 
     expect(desktopPackage.homepage).toBe('https://github.com/aiis2/risk-agent');
     expect(desktopPackage.dependenciesMeta?.['@risk-agent/server']?.injected).toBe(true);
+    expect(desktopPackage.scripts?.['build:mac']).toBe(
+      'node ../../scripts/build-desktop-release.mjs --platform=macos',
+    );
+    expect(desktopPackage.scripts?.['build:linux']).toBe(
+      'node ../../scripts/build-desktop-release.mjs --platform=linux',
+    );
     expect(builderConfig.linux?.artifactName).toBe('Risk-Agent-${version}-${arch}.${ext}');
     expect(builderConfig.linux?.executableName).toBe('risk-agent');
     expect(builderConfig.extraResources).toContainEqual({

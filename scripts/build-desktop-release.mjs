@@ -120,6 +120,11 @@ async function buildWorkspacePackages() {
   const corepack = getExecutable('corepack');
   await run(corepack, ['pnpm', '--filter', '@risk-agent/core', 'build']);
   await run(corepack, ['pnpm', '--filter', '@risk-agent/server', 'build']);
+  await run(corepack, ['pnpm', 'install', '--offline', '--frozen-lockfile'], {
+    env: {
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1',
+    },
+  });
   await run(corepack, ['pnpm', '--filter', '@risk-agent/web', 'build']);
   await run(corepack, ['pnpm', '--filter', '@risk-agent/desktop', 'build']);
 }

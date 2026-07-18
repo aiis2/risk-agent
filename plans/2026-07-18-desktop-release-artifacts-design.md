@@ -137,6 +137,10 @@ packagers reject duplicate destinations.
 The desktop's injected server dependency is refreshed offline after the server
 build so a clean install snapshots the generated `dist` entrypoint before the
 desktop typecheck and native packaging steps.
+This refresh also runs in the builder's default local compilation path, not
+only in CI. Package-level Windows, macOS, and Linux distribution scripts all
+delegate to the staged builder; direct electron-builder commands cannot bypass
+the frozen production graph or macOS architecture isolation.
 
 ### Regression coverage
 
