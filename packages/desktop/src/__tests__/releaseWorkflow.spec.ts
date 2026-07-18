@@ -36,6 +36,18 @@ describe('desktop release workflow', () => {
     expect(workflow).toContain('node scripts/build-desktop-release.mjs --skip-build --platform=linux');
   });
 
+  it('uses Node 24-backed action majors', () => {
+    expect(workflow).toContain('actions/checkout@v7');
+    expect(workflow).toContain('pnpm/action-setup@v6');
+    expect(workflow).toContain('actions/setup-node@v7');
+    expect(workflow).toContain('actions/upload-artifact@v7');
+
+    expect(workflow).not.toContain('actions/checkout@v4');
+    expect(workflow).not.toContain('pnpm/action-setup@v4');
+    expect(workflow).not.toContain('actions/setup-node@v4');
+    expect(workflow).not.toContain('actions/upload-artifact@v4');
+  });
+
   it('installs the Windows production graph from the frozen pnpm lockfile', () => {
     const releaseBuilder = readFileSync(releaseBuilderPath, 'utf8');
     const workspaceBuild = releaseBuilder.match(
