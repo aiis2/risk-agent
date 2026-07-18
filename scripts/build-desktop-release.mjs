@@ -10,6 +10,12 @@ const stageNamePrefix = 'npm-desktop-stage';
 const stageRunId = `${Date.now()}-${process.pid}`;
 const stageDir = resolve(tmpRoot, `${stageNamePrefix}-${stageRunId}`);
 const latestPortableInfoPath = resolve(tmpRoot, `${stageNamePrefix}-latest.json`);
+const platformArgument = process.argv.find((argument) => argument.startsWith('--platform='));
+const platformName = platformArgument?.slice('--platform='.length) ?? 'windows';
+
+if (!['windows', 'macos', 'linux'].includes(platformName)) {
+  throw new Error(`unsupported desktop release platform: ${platformName}`);
+}
 
 function getExecutable(name) {
   if (process.platform === 'win32') {
@@ -159,7 +165,7 @@ async function finalizeStagePackage() {
     },
   });
 
-  await writeJson(resolve(stageDir, 'electron-builder.json'), {
+  const builderConfig = {
     appId: 'ai.aiis2.risk-agent',
     productName: 'Risk Agent',
     copyright: 'Copyright © 2026 aiis2',
@@ -186,13 +192,44 @@ async function finalizeStagePackage() {
     asar: true,
     asarUnpack: ['**/*.node'],
     compression: 'normal',
-    win: {
+    publish: null,
+  };
+
+  if (platformName === 'windows') {
+    builderConfig.win = {
       target: [{ target: 'portable', arch: ['x64'] }],
       publisherName: 'aiis2',
       signingHashAlgorithms: ['sha256'],
-    },
-    publish: null,
-  });
+    };
+  } else if (platformName === 'macos') {
+    builderConfig.mac = {
+      target: [
+        { target: 'dmg', arch: ['x64', 'arm64'] },
+        { target: 'zip', arch: ['x64', 'arm64'] },
+      ],
+      icon: 'build/icon.icns',
+      category: 'public.app-category.developer-tools',
+      hardenedRuntime: true,
+      gatekeeperAssess: false,
+      entitlements: 'build/entitlements.mac.plist',
+      entitlementsInherit: 'build/entitlements.mac.plist',
+      notarize: false,
+    };
+  } else if (platformName === 'linux') {
+    builderConfig.linux = {
+      artifactName: 'Risk-Agent-${version}-${arch}.${ext}',
+      executableName: 'risk-agent',
+      target: [
+        { target: 'AppImage', arch: ['x64'] },
+        { target: 'deb', arch: ['x64'] },
+      ],
+      icon: 'build/icon.png',
+      category: 'Development',
+      maintainer: 'aiis2 <risk-agent@aiis2.local>',
+    };
+  }
+
+  await writeJson(resolve(stageDir, 'electron-builder.json'), builderConfig);
 }
 
 async function installStageDependencies() {
@@ -205,9 +242,14 @@ async function installStageDependencies() {
   });
 }
 
-async function buildPortable() {
+async function buildRelease() {
   const electronBuilder = findElectronBuilder();
-  await run(electronBuilder, ['--projectDir', stageDir, '--win', 'portable', '--x64']);
+  const platformArguments = platformName === 'windows'
+    ? ['--win', 'portable', '--x64']
+    : platformName === 'macos'
+      ? ['--mac']
+      : ['--linux'];
+  await run(electronBuilder, ['--projectDir', stageDir, ...platformArguments]);
 }
 
 async function validatePortable(artifactPath) {
@@ -229,20 +271,30 @@ async function main() {
   await prepareStageWorkspace();
   await installStageDependencies();
   await finalizeStagePackage();
-  await buildPortable();
+  await buildRelease();
 
-  const artifactPath = join(stageDir, 'release', 'Risk Agent 0.1.0.exe');
   if (shouldValidate) {
+    if (platformName !== 'windows') {
+      throw new Error('--validate only supports the Windows portable release');
+    }
+
+    const artifactPath = join(stageDir, 'release', 'Risk Agent 0.1.0.exe');
     await validatePortable(artifactPath);
+    await writeJson(latestPortableInfoPath, {
+      stageDir,
+      artifactPath,
+      builtAt: new Date().toISOString(),
+    });
+  } else if (platformName === 'windows') {
+    const artifactPath = join(stageDir, 'release', 'Risk Agent 0.1.0.exe');
+    await writeJson(latestPortableInfoPath, {
+      stageDir,
+      artifactPath,
+      builtAt: new Date().toISOString(),
+    });
   }
 
-  await writeJson(latestPortableInfoPath, {
-    stageDir,
-    artifactPath,
-    builtAt: new Date().toISOString(),
-  });
-
-  process.stdout.write(`\nPortable stage directory: ${stageDir}\nPortable executable: ${artifactPath}\n`);
+  process.stdout.write(`\nDesktop ${platformName} stage directory: ${stageDir}\nRelease directory: ${join(stageDir, 'release')}\n`);
 }
 
 main().catch((error) => {

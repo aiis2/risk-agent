@@ -11,7 +11,7 @@
     "dev": "echo desktop dev disabled in MVP",
     "package": "electron-builder --dir",
     "dist": "electron-builder",
-    "build:win": "node ../../scripts/build-desktop-portable.mjs",
+    "build:win": "node ../../scripts/build-desktop-release.mjs --platform=windows",
     "build:mac": "electron-builder --mac",
     "build:linux": "electron-builder --linux"
   },

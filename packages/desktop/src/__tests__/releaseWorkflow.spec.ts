@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 const workflowPath = resolve(__dirname, '../../../../.github/workflows/release-desktop.yml');
 const desktopPackagePath = resolve(__dirname, '../../package.json');
 const electronBuilderConfigPath = resolve(__dirname, '../../electron-builder.json');
-const portableBuilderPath = resolve(__dirname, '../../../../scripts/build-desktop-portable.mjs');
+const releaseBuilderPath = resolve(__dirname, '../../../../scripts/build-desktop-release.mjs');
 const releaseValidatorPath = resolve(__dirname, '../../../../scripts/validate-desktop-release-artifacts.mjs');
 const sqliteProbePath = resolve(__dirname, '../../../../scripts/probe-packaged-sqlite.cjs');
 
@@ -31,18 +31,20 @@ describe('desktop release workflow', () => {
   });
 
   it('runs a native packaging command for every matrix platform', () => {
-    expect(workflow).toContain('node scripts/build-desktop-portable.mjs --skip-build');
-    expect(workflow).toContain('pnpm build:mac');
-    expect(workflow).toContain('pnpm build:linux');
+    expect(workflow).toContain('node scripts/build-desktop-release.mjs --skip-build --platform=windows');
+    expect(workflow).toContain('node scripts/build-desktop-release.mjs --skip-build --platform=macos');
+    expect(workflow).toContain('node scripts/build-desktop-release.mjs --skip-build --platform=linux');
   });
 
   it('installs the Windows production graph from the frozen pnpm lockfile', () => {
-    const portableBuilder = readFileSync(portableBuilderPath, 'utf8');
+    const releaseBuilder = readFileSync(releaseBuilderPath, 'utf8');
 
-    expect(portableBuilder).toContain("getExecutable('corepack')");
-    expect(portableBuilder).toContain("'install', '--prod', '--frozen-lockfile'");
-    expect(portableBuilder).toContain("'--config.node-linker=hoisted'");
-    expect(portableBuilder).not.toContain("['install', '--omit=dev'");
+    expect(releaseBuilder).toContain("getExecutable('corepack')");
+    expect(releaseBuilder).toContain("'install', '--prod', '--frozen-lockfile'");
+    expect(releaseBuilder).toContain("'--config.node-linker=hoisted'");
+    expect(releaseBuilder).toContain("platformName === 'macos'");
+    expect(releaseBuilder).toContain("platformName === 'linux'");
+    expect(releaseBuilder).not.toContain("['install', '--omit=dev'");
   });
 
   it('keeps unsigned packaging separate from optional signing credentials', () => {
@@ -61,6 +63,8 @@ describe('desktop release workflow', () => {
 
     expect(workflow).toContain('node scripts/validate-desktop-release-artifacts.mjs');
     expect(workflow).toContain('tmp/npm-desktop-stage-*/release/*.exe');
+    expect(workflow).toContain('tmp/npm-desktop-stage-*/release/*.dmg');
+    expect(workflow).toContain('tmp/npm-desktop-stage-*/release/*.AppImage');
     expect(workflow).toContain('packages/desktop/release/*.dmg');
     expect(workflow).toContain('packages/desktop/release/*.AppImage');
     expect(workflow).toContain('if-no-files-found: error');
@@ -75,12 +79,13 @@ describe('desktop release workflow', () => {
     };
     const builderConfig = JSON.parse(readFileSync(electronBuilderConfigPath, 'utf8')) as {
       extraResources?: Array<{ from?: string; to?: string }>;
-      linux?: { artifactName?: string };
+      linux?: { artifactName?: string; executableName?: string };
     };
 
     expect(desktopPackage.homepage).toBe('https://github.com/aiis2/risk-agent');
     expect(desktopPackage.dependenciesMeta?.['@risk-agent/server']?.injected).toBe(true);
     expect(builderConfig.linux?.artifactName).toBe('Risk-Agent-${version}-${arch}.${ext}');
+    expect(builderConfig.linux?.executableName).toBe('risk-agent');
     expect(builderConfig.extraResources).toContainEqual({
       from: '../web/dist',
       to: 'web-dist',

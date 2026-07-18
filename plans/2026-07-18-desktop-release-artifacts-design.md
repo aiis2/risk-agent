@@ -71,15 +71,16 @@ repair it.
 The matrix remains on `windows-latest`, `macos-latest`, and `ubuntu-latest`, but
 each entry also declares a stable artifact label and a packaging command:
 
-- Windows runs `node scripts/build-desktop-portable.mjs --skip-build`.
-- macOS runs `pnpm build:mac`.
-- Linux runs `pnpm build:linux`.
+- Windows runs `node scripts/build-desktop-release.mjs --skip-build --platform=windows`.
+- macOS runs `node scripts/build-desktop-release.mjs --skip-build --platform=macos`.
+- Linux runs `node scripts/build-desktop-release.mjs --skip-build --platform=linux`.
 
 Before packaging, the workflow explicitly builds core, server, web, and
-desktop output in dependency order. The Windows builder gains the narrow
-`--skip-build` option so it can prepare its standalone stage without rebuilding
-the same workspace packages a second time. Local invocations keep their current
-behavior and still build prerequisites by default.
+desktop output in dependency order. Every native target uses the same concrete
+hoisted production stage, avoiding pnpm workspace symlinks that electron-builder
+cannot reliably traverse. The release builder accepts `--skip-build` so CI can
+reuse the workspace output. Local invocations keep their current behavior and
+still build prerequisites by default.
 
 ### Artifact contract
 
@@ -87,6 +88,10 @@ The upload action accepts the existing platform extensions from both output
 roots:
 
 - `tmp/npm-desktop-stage-*/release/*.exe`
+- `tmp/npm-desktop-stage-*/release/*.dmg`
+- `tmp/npm-desktop-stage-*/release/*.zip`
+- `tmp/npm-desktop-stage-*/release/*.AppImage`
+- `tmp/npm-desktop-stage-*/release/*.deb`
 - `packages/desktop/release/*.exe`
 - `packages/desktop/release/*.dmg`
 - `packages/desktop/release/*.zip`
@@ -122,8 +127,8 @@ directory traversal protection.
 
 The install step changes from `--frozen-lockfile=false` to
 `--frozen-lockfile`. Release automation must use the exact reviewed dependency
-graph rather than mutating resolution state during packaging. The Windows
-staging builder follows the same rule by creating a minimal staged workspace
+graph rather than mutating resolution state during packaging. The native
+release builder follows the same rule by creating a minimal staged workspace
 and running `pnpm install --prod --frozen-lockfile
 --config.node-linker=hoisted`; it must not run a second lockless npm resolution.
 The desktop's injected server dependency is refreshed offline after the server
@@ -168,8 +173,8 @@ defect is investigated.
 
 1. Add the workflow contract test and record its failures against the current
    TypeScript-only build, mutable install, and warning-only upload.
-2. Add `--skip-build` to the Windows staging builder without changing default
-   local behavior.
+2. Add `--skip-build` and platform targeting to the native release builder
+   without changing default local behavior.
 3. Update the workflow matrix, package builds, upload paths, and failure mode.
 4. Run the focused test, typecheck, lint, and the full Vitest workspace.
 5. Build and validate the Windows portable artifact locally.

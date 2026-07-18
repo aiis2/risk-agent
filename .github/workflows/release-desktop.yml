@@ -18,15 +18,15 @@ jobs:
         include:
           - os: windows-latest
             artifact_name: windows-portable
-            package_command: node scripts/build-desktop-portable.mjs --skip-build
+            package_command: node scripts/build-desktop-release.mjs --skip-build --platform=windows
             signing_platform: windows
           - os: macos-latest
             artifact_name: macos
-            package_command: pnpm build:mac
+            package_command: node scripts/build-desktop-release.mjs --skip-build --platform=macos
             signing_platform: macos
           - os: ubuntu-latest
             artifact_name: linux
-            package_command: pnpm build:linux
+            package_command: node scripts/build-desktop-release.mjs --skip-build --platform=linux
             signing_platform: none
     runs-on: ${{ matrix.os }}
     env:
@@ -93,6 +93,10 @@ jobs:
           name: risk-agent-${{ matrix.artifact_name }}
           path: |
             tmp/npm-desktop-stage-*/release/*.exe
+            tmp/npm-desktop-stage-*/release/*.dmg
+            tmp/npm-desktop-stage-*/release/*.zip
+            tmp/npm-desktop-stage-*/release/*.AppImage
+            tmp/npm-desktop-stage-*/release/*.deb
             packages/desktop/release/*.exe
             packages/desktop/release/*.dmg
             packages/desktop/release/*.zip

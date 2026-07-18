@@ -245,7 +245,7 @@ turn compile-time success into runtime failures for Node.js 24-only APIs.
 
 **Files:**
 - Modify: `packages/desktop/package.json`
-- Modify: `scripts/build-desktop-portable.mjs`
+- Modify: `scripts/build-desktop-release.mjs`
 - Modify: `pnpm-lock.yaml`
 
 **Step 1: Record the failing runtime check**

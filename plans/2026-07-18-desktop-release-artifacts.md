@@ -36,10 +36,10 @@ corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts pac
 Expected: failures show the current mutable install, TypeScript-only desktop
 build, missing Windows staging upload, and warning-only empty artifact policy.
 
-## Task 2: Avoid Duplicate Windows Workspace Builds
+## Task 2: Avoid Duplicate Native Workspace Builds
 
 **Files:**
-- Modify: `scripts/build-desktop-portable.mjs`
+- Modify: `scripts/build-desktop-release.mjs`
 
 **Step 1: Add an opt-in skip flag**
 
@@ -79,8 +79,9 @@ desktop build.
 
 **Step 4: Run the matrix packaging command**
 
-Run the static `matrix.package_command` value. The commands must be the Windows
-staging builder with `--skip-build`, `pnpm build:mac`, and `pnpm build:linux`.
+Run the static `matrix.package_command` value. Each platform invokes the native
+release builder with `--skip-build` and its explicit platform argument so all
+three packages consume the same hoisted frozen production stage.
 
 **Step 5: Enforce the artifact contract**
 

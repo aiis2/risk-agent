@@ -46,25 +46,42 @@ async function findFiles(rootPath, predicate) {
   return matches;
 }
 
-async function findMacApplications() {
-  const applications = [];
-  const entries = await readDirectory(desktopReleaseRoot);
+async function findStageReleaseRoots() {
+  const releaseRoots = [];
+  const entries = await readDirectory(temporaryRoot);
 
   for (const entry of entries) {
-    const entryPath = join(desktopReleaseRoot, entry.name);
-    if (entry.isDirectory() && entry.name.endsWith('.app')) {
-      applications.push(entryPath);
+    if (!entry.isDirectory() || !entry.name.startsWith('npm-desktop-stage-')) {
       continue;
     }
 
-    if (!entry.isDirectory() || !entry.name.startsWith('mac')) {
-      continue;
-    }
+    releaseRoots.push(join(temporaryRoot, entry.name, 'release'));
+  }
 
-    const nestedEntries = await readDirectory(entryPath);
-    for (const nestedEntry of nestedEntries) {
-      if (nestedEntry.isDirectory() && nestedEntry.name.endsWith('.app')) {
-        applications.push(join(entryPath, nestedEntry.name));
+  return releaseRoots;
+}
+
+async function findMacApplications(releaseRoots) {
+  const applications = [];
+
+  for (const releaseRoot of releaseRoots) {
+    const entries = await readDirectory(releaseRoot);
+    for (const entry of entries) {
+      const entryPath = join(releaseRoot, entry.name);
+      if (entry.isDirectory() && entry.name.endsWith('.app')) {
+        applications.push(entryPath);
+        continue;
+      }
+
+      if (!entry.isDirectory() || !entry.name.startsWith('mac')) {
+        continue;
+      }
+
+      const nestedEntries = await readDirectory(entryPath);
+      for (const nestedEntry of nestedEntries) {
+        if (nestedEntry.isDirectory() && nestedEntry.name.endsWith('.app')) {
+          applications.push(join(entryPath, nestedEntry.name));
+        }
       }
     }
   }
@@ -74,17 +91,10 @@ async function findMacApplications() {
 
 async function findWindowsPackages() {
   const packageRoots = [];
-  const releaseRoots = [];
-  const entries = await readDirectory(temporaryRoot);
+  const releaseRoots = await findStageReleaseRoots();
 
-  for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('npm-desktop-stage-')) {
-      continue;
-    }
-
-    const releaseRoot = join(temporaryRoot, entry.name, 'release');
+  for (const releaseRoot of releaseRoots) {
     const releaseEntries = await readDirectory(releaseRoot);
-    releaseRoots.push(releaseRoot);
 
     for (const releaseEntry of releaseEntries) {
       if (releaseEntry.isDirectory() && /^win(?:-[^-]+)?-unpacked$/i.test(releaseEntry.name)) {
@@ -96,11 +106,17 @@ async function findWindowsPackages() {
   return { packageRoots, releaseRoots };
 }
 
-async function findLinuxPackages() {
-  const entries = await readDirectory(desktopReleaseRoot);
-  return entries
-    .filter((entry) => entry.isDirectory() && /^linux(?:-[^-]+)?-unpacked$/i.test(entry.name))
-    .map((entry) => join(desktopReleaseRoot, entry.name));
+async function findLinuxPackages(releaseRoots) {
+  const packageRoots = [];
+
+  for (const releaseRoot of releaseRoots) {
+    const entries = await readDirectory(releaseRoot);
+    packageRoots.push(...entries
+      .filter((entry) => entry.isDirectory() && /^linux(?:-[^-]+)?-unpacked$/i.test(entry.name))
+      .map((entry) => join(releaseRoot, entry.name)));
+  }
+
+  return packageRoots;
 }
 
 async function requireInstallers(releaseRoots, requiredExtensions) {
@@ -252,12 +268,12 @@ async function main() {
     ({ packageRoots, releaseRoots } = await findWindowsPackages());
     requiredExtensions = ['.exe'];
   } else if (process.platform === 'darwin') {
-    packageRoots = await findMacApplications();
-    releaseRoots = [desktopReleaseRoot];
+    releaseRoots = [desktopReleaseRoot, ...await findStageReleaseRoots()];
+    packageRoots = await findMacApplications(releaseRoots);
     requiredExtensions = ['.dmg', '.zip'];
   } else if (process.platform === 'linux') {
-    packageRoots = await findLinuxPackages();
-    releaseRoots = [desktopReleaseRoot];
+    releaseRoots = [desktopReleaseRoot, ...await findStageReleaseRoots()];
+    packageRoots = await findLinuxPackages(releaseRoots);
     requiredExtensions = ['.AppImage', '.deb'];
   } else {
     throw new Error(`unsupported release platform: ${process.platform}`);
