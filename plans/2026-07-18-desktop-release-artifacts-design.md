@@ -126,6 +126,9 @@ graph rather than mutating resolution state during packaging. The Windows
 staging builder follows the same rule by creating a minimal staged workspace
 and running `pnpm install --prod --frozen-lockfile
 --config.node-linker=hoisted`; it must not run a second lockless npm resolution.
+The desktop's injected server dependency is refreshed offline after the server
+build so a clean install snapshots the generated `dist` entrypoint before the
+desktop typecheck and native packaging steps.
 
 ### Regression coverage
 
@@ -144,8 +147,11 @@ skip.
 Before upload, each native job validates the unpacked application as well as
 the installer list. The gate requires a non-empty platform installer set,
 `resources/web-dist/index.html`, and the rebuilt `better_sqlite3.node` module.
-This catches packages that electron-builder completed but that cannot serve the
-UI or open the embedded database at runtime.
+The host-compatible unpacked Electron executable must also load that packaged
+module and complete an in-memory SQLite query. macOS additionally checks every
+targeted native binary architecture, including the package that cannot execute
+on the runner host. This catches packages that electron-builder completed but
+that cannot serve the UI or open the embedded database at runtime.
 
 ## Error Handling And Rollback
 

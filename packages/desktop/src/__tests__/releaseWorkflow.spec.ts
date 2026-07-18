@@ -6,6 +6,8 @@ const workflowPath = resolve(__dirname, '../../../../.github/workflows/release-d
 const desktopPackagePath = resolve(__dirname, '../../package.json');
 const electronBuilderConfigPath = resolve(__dirname, '../../electron-builder.json');
 const portableBuilderPath = resolve(__dirname, '../../../../scripts/build-desktop-portable.mjs');
+const releaseValidatorPath = resolve(__dirname, '../../../../scripts/validate-desktop-release-artifacts.mjs');
+const sqliteProbePath = resolve(__dirname, '../../../../scripts/probe-packaged-sqlite.cjs');
 
 describe('desktop release workflow', () => {
   const workflow = readFileSync(workflowPath, 'utf8');
@@ -20,6 +22,12 @@ describe('desktop release workflow', () => {
     expect(workflow).toContain('pnpm --filter @risk-agent/server build');
     expect(workflow).toContain('pnpm --filter @risk-agent/web build');
     expect(workflow).toContain('pnpm --filter @risk-agent/desktop build');
+
+    const serverBuildIndex = workflow.indexOf('pnpm --filter @risk-agent/server build');
+    const injectionRefreshIndex = workflow.indexOf('pnpm install --offline --frozen-lockfile');
+    const desktopBuildIndex = workflow.indexOf('pnpm --filter @risk-agent/desktop build');
+    expect(serverBuildIndex).toBeLessThan(injectionRefreshIndex);
+    expect(injectionRefreshIndex).toBeLessThan(desktopBuildIndex);
   });
 
   it('runs a native packaging command for every matrix platform', () => {
@@ -48,11 +56,16 @@ describe('desktop release workflow', () => {
   });
 
   it('uploads both release roots and fails when no installer exists', () => {
+    const releaseValidator = readFileSync(releaseValidatorPath, 'utf8');
+    const sqliteProbe = readFileSync(sqliteProbePath, 'utf8');
+
     expect(workflow).toContain('node scripts/validate-desktop-release-artifacts.mjs');
     expect(workflow).toContain('tmp/npm-desktop-stage-*/release/*.exe');
     expect(workflow).toContain('packages/desktop/release/*.dmg');
     expect(workflow).toContain('packages/desktop/release/*.AppImage');
     expect(workflow).toContain('if-no-files-found: error');
+    expect(releaseValidator).toContain('ELECTRON_RUN_AS_NODE');
+    expect(sqliteProbe).toContain('SELECT 42 AS value');
   });
 
   it('provides the project metadata required by Linux packagers', () => {

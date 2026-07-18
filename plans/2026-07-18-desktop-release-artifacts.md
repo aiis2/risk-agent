@@ -73,6 +73,9 @@ pnpm install --frozen-lockfile
 **Step 3: Build all workspace outputs once**
 
 Build core, server, web, and desktop in that order before packaging.
+After the server build, refresh the injected workspace packages with an offline
+frozen install so a clean runner exposes the generated server entrypoint to the
+desktop build.
 
 **Step 4: Run the matrix packaging command**
 
@@ -87,7 +90,9 @@ bundle with `matrix.artifact_name`, and set `if-no-files-found: error`.
 Before upload, run `validate-desktop-release-artifacts.mjs`. Require each
 unpacked application to contain the Web UI entrypoint and the rebuilt
 `better_sqlite3.node` module, and require every platform's expected installer
-extensions to be present and non-empty.
+extensions to be present and non-empty. Run the host-compatible packaged
+Electron executable in Node mode and require an in-memory SQLite query to pass;
+on macOS, also validate the native-module architecture for every target.
 
 ## Task 4: Document Release Outputs
 

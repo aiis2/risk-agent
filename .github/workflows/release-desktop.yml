@@ -51,6 +51,7 @@ jobs:
         run: |
           pnpm --filter @risk-agent/core build
           pnpm --filter @risk-agent/server build
+          pnpm install --offline --frozen-lockfile
           pnpm --filter @risk-agent/web build
           pnpm --filter @risk-agent/desktop build
 
