@@ -93,7 +93,9 @@ definition has one owner.
 ### Desktop compile-time boundary
 
 Add a desktop TypeScript project reference to core and map the type-only
-`@risk-agent/core/browser-host` alias directly to the pure contract source.
+`@risk-agent/core/browser/BrowserHostAdapter` alias directly to the pure contract source. The
+specifier matches core's published wildcard export so emitted desktop declarations remain
+resolvable by downstream TypeScript consumers.
 Change desktop Browser Host imports to that alias. Do not add a desktop npm
 dependency on core: pnpm deduplicates that direct link into the injected server
 snapshot, changing the production core edge from a concrete `file:` package to

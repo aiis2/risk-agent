@@ -7,7 +7,7 @@
     "module": "CommonJS",
     "moduleResolution": "Node",
     "paths": {
-      "@risk-agent/core/browser-host": ["../core/src/browser/BrowserHostAdapter.ts"]
+      "@risk-agent/core/browser/BrowserHostAdapter": ["../core/src/browser/BrowserHostAdapter.ts"]
     },
     "types": ["node"]
   },

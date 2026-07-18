@@ -26,12 +26,12 @@ describe('desktop compile-time dependency boundary', () => {
     const coreIndex = readFileSync(coreIndexPath, 'utf8');
 
     expect(desktopPackage.dependencies?.['@risk-agent/core']).toBeUndefined();
-    expect(desktopTsconfig.compilerOptions?.paths?.['@risk-agent/core/browser-host']).toEqual([
+    expect(desktopTsconfig.compilerOptions?.paths?.['@risk-agent/core/browser/BrowserHostAdapter']).toEqual([
       '../core/src/browser/BrowserHostAdapter.ts',
     ]);
     expect(desktopTsconfig.references).toContainEqual({ path: '../core' });
-    expect(backend).toContain("from '@risk-agent/core/browser-host'");
-    expect(browserHostService).toContain("from '@risk-agent/core/browser-host'");
+    expect(backend).toContain("from '@risk-agent/core/browser/BrowserHostAdapter'");
+    expect(browserHostService).toContain("from '@risk-agent/core/browser/BrowserHostAdapter'");
     expect(backend).not.toContain("from '@risk-agent/server'");
     expect(backend).not.toContain("typeof import('@risk-agent/server')");
     expect(browserHostService).not.toContain("from '@risk-agent/server'");

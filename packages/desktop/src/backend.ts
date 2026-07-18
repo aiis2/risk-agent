@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { mkdir, writeFile, readFile, access } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { BrowserHostAdapter } from '@risk-agent/core/browser-host';
+import type { BrowserHostAdapter } from '@risk-agent/core/browser/BrowserHostAdapter';
 
 type EmbeddedBuildAppOptions = {
   dataDir?: string;
