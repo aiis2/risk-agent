@@ -41,7 +41,7 @@ operation.
 
 ## Requirements
 
-- Node.js 20 or newer
+- Node.js 24 LTS
 - pnpm 9
 - Windows, macOS, or Linux for web/server development
 - Optional: Docker for container deployment

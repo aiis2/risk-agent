@@ -5,7 +5,7 @@
   "description": "Risk Agent - 智能风控主动探查系统",
   "packageManager": "pnpm@9.0.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=24 <25"
   },
   "scripts": {
     "dev": "node scripts/dev.mjs",
@@ -36,7 +36,7 @@
     "db:import": "cd packages/server && npx tsx src/cli/db.ts import"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
+    "@types/node": "^24.13.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^8.57.0",

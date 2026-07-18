@@ -235,3 +235,36 @@ git commit -m "build: move runtime baseline to Node 24"
 
 Push the implementation branch, open a PR against `main`, link the spec PR,
 include RED/GREEN install evidence, and close issue #4 on merge.
+
+### Review Adjustment: Align The Embedded Desktop Runtime
+
+Independent review found that Electron 30.5.1 embeds Node.js 20.16.0. Keeping
+that version while compiling desktop code against Node.js 24 declarations would
+leave the shipped application outside the stated runtime contract and could
+turn compile-time success into runtime failures for Node.js 24-only APIs.
+
+**Files:**
+- Modify: `packages/desktop/package.json`
+- Modify: `scripts/build-desktop-portable.mjs`
+- Modify: `pnpm-lock.yaml`
+
+**Step 1: Record the failing runtime check**
+
+Run the installed Electron executable with `ELECTRON_RUN_AS_NODE=1` and print
+`process.versions`. Expected before the correction: Electron 30.5.1 reports
+Node.js 20.16.0.
+
+**Step 2: Upgrade and align Electron**
+
+Set the desktop dependency and portable staging configuration to Electron
+42.7.0. This release embeds Node.js 24.18.0 and uses ABI 146, for which
+`better-sqlite3@12.11.1` publishes prebuilt binaries. Electron 43 was rejected
+because its ABI 148 would require local C++ compilation. Update only the
+Electron-related lockfile snapshots.
+
+**Step 3: Verify the embedded runtime and regressions**
+
+Repeat the runtime check. Expected: Electron 42.7.0 reports Node.js 24.18.0.
+Then build the real Windows portable artifact to exercise the native SQLite
+rebuild, and rerun the frozen install, desktop typecheck/tests, and the full
+workspace verification before marking the implementation PR ready.
