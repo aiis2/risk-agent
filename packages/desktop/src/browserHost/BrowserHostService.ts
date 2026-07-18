@@ -10,7 +10,7 @@ import type {
   BrowserHostScreenshotResult,
   BrowserHostSnapshotResult,
   BrowserHostTabSnapshot,
-} from '@risk-agent/server';
+} from '@risk-agent/core/browser/BrowserHostAdapter';
 import { SHARED_BROWSER_PARTITION } from './sharedBrowserSession';
 
 const HOST_HEADER_HEIGHT = 104;

@@ -11,10 +11,17 @@ import { join } from 'node:path';
 import { mkdir, writeFile, readFile, access } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { BrowserHostAdapter } from '@risk-agent/server';
+import type { BrowserHostAdapter } from '@risk-agent/core/browser/BrowserHostAdapter';
+
+type EmbeddedBuildAppOptions = {
+  dataDir?: string;
+  host?: string;
+  port?: number;
+  browserHostAdapter?: BrowserHostAdapter | null;
+};
 
 type BuildAppModule = {
-  buildApp: (...args: Parameters<typeof import('@risk-agent/server')['buildApp']>) => Promise<{
+  buildApp: (options?: EmbeddedBuildAppOptions) => Promise<{
     app: {
       listen(options: { host: string; port: number }): Promise<unknown>;
       close(): Promise<unknown>;

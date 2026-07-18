@@ -33,14 +33,14 @@ re-export so existing server imports remain valid.
 **Files:**
 - Modify: `packages/desktop/src/backend.ts`
 - Modify: `packages/desktop/src/browserHost/BrowserHostService.ts`
-- Modify: `packages/desktop/package.json`
 - Modify: `packages/desktop/tsconfig.json`
-- Modify: `pnpm-lock.yaml`
 
-Import Browser Host contracts from core, add the direct workspace dependency
-and TypeScript reference, and replace the server package type query with the
-minimal local loader interface. Preserve the indirect runtime import string and
-the injected server dependency.
+Import Browser Host contracts through a type-only core path alias and project
+reference, and replace the server package type query with the minimal local
+loader interface. Preserve the indirect runtime import string and the injected
+server dependency. Keep the package manifest and production lock graph
+unchanged; a direct core dependency would turn the injected concrete core copy
+back into a workspace link.
 
 Run the focused test and affected desktop/server tests.
 

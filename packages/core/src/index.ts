@@ -7,6 +7,9 @@ export * from './agents/base/types.js';
 export * from './agents/base/AgentState.js';
 export * from './agents/base/BaseAgent.js';
 
+// Shared host contracts
+export * from './browser/BrowserHostAdapter.js';
+
 // 存储
 export * from './storage/interfaces/IStructuredStore.js';
 export * from './storage/interfaces/IVectorStore.js';

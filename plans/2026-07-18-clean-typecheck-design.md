@@ -46,8 +46,9 @@ expected to be a direct, read-only quality gate after installation.
 This is the selected option. Core already owns cross-package protocols and is a
 TypeScript project dependency built before server and desktop. The server can
 re-export the contract from its existing local module, preserving internal and
-external type import paths, while desktop imports the shared contract from
-core. Desktop can describe only the subset of the dynamically loaded server
+external type import paths. Desktop resolves the type-only contract through a
+TypeScript path alias and project reference, without adding a production npm
+edge. Desktop can describe only the subset of the dynamically loaded server
 module it calls, avoiding a package type query.
 
 This makes the source dependency graph match the architecture: desktop and
@@ -91,8 +92,14 @@ definition has one owner.
 
 ### Desktop compile-time boundary
 
-Add `@risk-agent/core` as a direct desktop workspace dependency and add a core
-TypeScript project reference. Change desktop Browser Host imports to core.
+Add a desktop TypeScript project reference to core and map the type-only
+`@risk-agent/core/browser/BrowserHostAdapter` alias directly to the pure contract source. The
+specifier matches core's published wildcard export so emitted desktop declarations remain
+resolvable by downstream TypeScript consumers.
+Change desktop Browser Host imports to that alias. Do not add a desktop npm
+dependency on core: pnpm deduplicates that direct link into the injected server
+snapshot, changing the production core edge from a concrete `file:` package to
+a workspace `link:` and weakening the release graph repaired in issue #7.
 
 In `backend.ts`, replace `Parameters<typeof import('@risk-agent/server')...>`
 with a local structural interface containing only the `buildApp` input and
@@ -100,15 +107,17 @@ result members that desktop calls. The runtime loader remains the existing
 indirect dynamic import of the string `@risk-agent/server`; no server code is
 bundled into desktop and the production dependency remains declared.
 
-The lockfile records the new direct workspace edge. It does not change resolved
-third-party versions.
+The package manifest and lockfile remain unchanged. The TypeScript reference is
+the compile-time edge; the existing server dependency remains the production
+runtime edge.
 
 ### Regression coverage
 
 Add a focused desktop dependency-boundary test that reads source and
 configuration as structured text or JSON. It requires:
 
-- a direct core dependency and project reference;
+- a core project reference and type-only path alias, with no new production
+  core dependency;
 - desktop Browser Host types to import from core;
 - no static import or TypeScript type query for `@risk-agent/server`;
 - the runtime server specifier to remain present;
