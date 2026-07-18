@@ -88,11 +88,24 @@ to `^24.13.0`. The lockfile will resolve the current compatible 24.x release and
 its matching `undici-types` dependency. Typecheck is the acceptance gate for
 any Node API declaration changes.
 
+### Embedded desktop runtime
+
+The desktop application must satisfy the same runtime contract as the external
+build and server processes. Electron 30 embeds Node.js 20, so changing only the
+desktop type declarations would allow Node.js 24 APIs to compile while leaving
+the packaged application on an end-of-life runtime. Electron will move to
+`42.7.0`, which embeds Node.js 24.18.0 and uses ABI 146. That ABI has published
+`better-sqlite3@12.11.1` prebuilds, unlike Electron 43's newer ABI 148. The
+portable staging configuration will use the same exact Electron version.
+Running Electron as Node and building the real portable artifact are the
+acceptance checks for the embedded runtime.
+
 ### Lockfile discipline
 
-Only the importer specifiers and snapshots required by `better-sqlite3` and
-`@types/node` may change. A frozen install after editing must accept the
-lockfile without rewriting it. Unrelated transitive upgrades are out of scope.
+Only the importer specifiers and snapshots required by `better-sqlite3`,
+`@types/node`, and Electron may change. A frozen install after editing must
+accept the lockfile without rewriting it. Unrelated transitive upgrades are out
+of scope.
 
 ## Error Handling And Rollback
 
@@ -108,12 +121,13 @@ schema or persisted data format is intentionally changed.
 2. Apply manifest, lockfile, documentation, Docker, and workflow edits.
 3. Run a clean frozen install on Node.js 24.
 4. Load `better-sqlite3` and open/query an in-memory database.
-5. Run typecheck and lint.
-6. Run the full Vitest workspace, with special attention to SQLite storage
+5. Run the installed Electron binary as Node and confirm it embeds Node.js 24.
+6. Run typecheck and lint.
+7. Run the full Vitest workspace, with special attention to SQLite storage
    tests that were previously blocked by the missing binding.
-7. Run the full build and build the server Docker image when Docker is
+8. Run the full build and build the server Docker image when Docker is
    available.
-8. Confirm the diff contains no Node.js 20 runtime references or unrelated
+9. Confirm the diff contains no Node.js 20 runtime references or unrelated
    dependency updates.
 
 ## Acceptance Criteria

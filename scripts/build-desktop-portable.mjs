@@ -163,7 +163,7 @@ async function prepareStage() {
     appId: 'ai.aiis2.risk-agent',
     productName: 'Risk Agent',
     copyright: 'Copyright © 2026 aiis2',
-    electronVersion: '30.5.1',
+    electronVersion: '42.7.0',
     directories: {
       output: 'release',
       buildResources: 'build',
