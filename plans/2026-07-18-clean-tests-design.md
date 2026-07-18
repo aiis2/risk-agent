@@ -124,4 +124,3 @@ spaces, non-ASCII checkout paths, macOS, and Linux without manual separators.
 - Package manifests, lockfile, production exports, and runtime imports are
   unchanged.
 - Typecheck, lint, builds, full tests, and exact-head native packaging pass.
-

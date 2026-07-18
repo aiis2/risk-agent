@@ -145,4 +145,3 @@ Request an independent review of the complete implementation diff. Resolve all
 correctness findings, update the implementation PR with exact-head evidence,
 mark it ready, and squash-merge it. Confirm Issue #16 closes and `origin/main`
 advances to the merge commit.
-
