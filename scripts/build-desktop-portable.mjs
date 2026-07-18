@@ -207,9 +207,12 @@ async function validatePortable(artifactPath) {
 
 async function main() {
   const shouldValidate = process.argv.includes('--validate');
+  const shouldBuildWorkspace = !process.argv.includes('--skip-build');
 
   await cleanupPreviousStages();
-  await buildWorkspacePackages();
+  if (shouldBuildWorkspace) {
+    await buildWorkspacePackages();
+  }
   await prepareStage();
   await installStageDependencies();
   await buildPortable();

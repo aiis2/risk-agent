@@ -86,12 +86,16 @@ behavior and still build prerequisites by default.
 The upload action accepts the existing platform extensions from both output
 roots:
 
-- `tmp/npm-desktop-stage-*/release/**/*.exe`
-- `packages/desktop/release/**/*.exe`
-- `packages/desktop/release/**/*.dmg`
-- `packages/desktop/release/**/*.zip`
-- `packages/desktop/release/**/*.AppImage`
-- `packages/desktop/release/**/*.deb`
+- `tmp/npm-desktop-stage-*/release/*.exe`
+- `packages/desktop/release/*.exe`
+- `packages/desktop/release/*.dmg`
+- `packages/desktop/release/*.zip`
+- `packages/desktop/release/*.AppImage`
+- `packages/desktop/release/*.deb`
+
+Only top-level installer files are uploaded. In particular, the Windows glob
+must not collect executables from electron-builder's `win-unpacked` directory,
+which would create an incomplete and misleading artifact bundle.
 
 `if-no-files-found` becomes `error`. This converts the core invariant from a
 best-effort warning into a release gate.

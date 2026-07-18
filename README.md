@@ -166,6 +166,12 @@ pnpm build
 pnpm package:desktop:portable
 ```
 
+The Windows portable command writes its executable under
+`tmp/npm-desktop-stage-*/release`. Native macOS and Linux distribution commands
+write DMG/ZIP or AppImage/DEB files under `packages/desktop/release`. The desktop
+release workflow runs the matching command on each native GitHub runner and
+fails when a job produces no supported installer.
+
 For service deployment, use the Compose and nginx examples in `docker/` as a
 starting point. Keep production secrets in your platform secret manager or
 environment, never in committed JSON or env files.

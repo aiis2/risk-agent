@@ -30,7 +30,7 @@ Keep assertions focused on commands and paths; do not snapshot the full file.
 Run:
 
 ```powershell
-corepack pnpm --filter @risk-agent/desktop test -- releaseWorkflow.spec.ts
+corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts
 ```
 
 Expected: failures show the current mutable install, TypeScript-only desktop
@@ -100,7 +100,7 @@ an empty artifact set. Do not document signing secrets or internal CI details.
 Run sequentially:
 
 ```powershell
-corepack pnpm --filter @risk-agent/desktop test -- releaseWorkflow.spec.ts
+corepack pnpm test -- packages/desktop/src/__tests__/releaseWorkflow.spec.ts
 corepack pnpm typecheck
 corepack pnpm lint
 corepack pnpm test
