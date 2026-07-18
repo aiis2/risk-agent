@@ -58,6 +58,7 @@
     "notarize": false
   },
   "linux": {
+    "artifactName": "Risk-Agent-${version}-${arch}.${ext}",
     "target": [
       { "target": "AppImage", "arch": ["x64"] },
       { "target": "deb", "arch": ["x64"] }

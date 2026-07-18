@@ -108,7 +108,9 @@ signed and unsigned steps. Empty signing secrets are never exported as
 `CSC_LINK`, because electron-builder interprets that empty value as a local
 certificate path. Unsigned runs disable identity auto-discovery, while signed
 runs receive the configured credentials. The desktop package declares the
-repository homepage required by Linux package metadata.
+repository homepage required by Linux package metadata. Linux artifacts also
+use an explicit unscoped filename so the scoped npm package name cannot create
+an accidental subdirectory in the DEB output path.
 
 ### Reproducibility
 

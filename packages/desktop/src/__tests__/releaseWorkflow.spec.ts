@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 const workflowPath = resolve(__dirname, '../../../../.github/workflows/release-desktop.yml');
 const desktopPackagePath = resolve(__dirname, '../../package.json');
+const electronBuilderConfigPath = resolve(__dirname, '../../electron-builder.json');
 
 describe('desktop release workflow', () => {
   const workflow = readFileSync(workflowPath, 'utf8');
@@ -42,7 +43,11 @@ describe('desktop release workflow', () => {
 
   it('provides the project metadata required by Linux packagers', () => {
     const desktopPackage = JSON.parse(readFileSync(desktopPackagePath, 'utf8')) as { homepage?: string };
+    const builderConfig = JSON.parse(readFileSync(electronBuilderConfigPath, 'utf8')) as {
+      linux?: { artifactName?: string };
+    };
 
     expect(desktopPackage.homepage).toBe('https://github.com/aiis2/risk-agent');
+    expect(builderConfig.linux?.artifactName).toBe('Risk-Agent-${version}-${arch}.${ext}');
   });
 });
