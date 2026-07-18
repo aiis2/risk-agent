@@ -161,6 +161,13 @@ targeted native binary architecture, including the package that cannot execute
 on the runner host. This catches packages that electron-builder completed but
 that cannot serve the UI or open the embedded database at runtime.
 
+electron-builder rebuilds native dependencies in the staged `node_modules`
+tree. Building x64 and arm64 targets concurrently lets those rebuilds race,
+which can copy the arm64 SQLite binary into the x64 application. The macOS
+release builder therefore invokes electron-builder once per architecture in
+serial order. Each process finishes copying its unpacked application before
+the next process mutates the shared native module.
+
 ## Error Handling And Rollback
 
 If a platform packaging command exits nonzero, that matrix job fails before

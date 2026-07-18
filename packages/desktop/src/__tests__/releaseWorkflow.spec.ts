@@ -48,6 +48,14 @@ describe('desktop release workflow', () => {
     expect(releaseBuilder).not.toContain("from: 'node_modules/playwright-core'");
   });
 
+  it('packages each macOS architecture in an isolated builder pass', () => {
+    const releaseBuilder = readFileSync(releaseBuilderPath, 'utf8');
+
+    expect(releaseBuilder).toContain("['--mac', '--x64']");
+    expect(releaseBuilder).toContain("['--mac', '--arm64']");
+    expect(releaseBuilder).not.toContain("arch: ['x64', 'arm64']");
+  });
+
   it('keeps unsigned packaging separate from optional signing credentials', () => {
     const unsignedPackageBlock = workflow.match(/- name: Package desktop \(unsigned\)[\s\S]*?(?=\n\s+- name:)/)?.[0] ?? '';
 

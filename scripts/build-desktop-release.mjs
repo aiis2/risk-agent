@@ -198,10 +198,7 @@ async function finalizeStagePackage() {
     };
   } else if (platformName === 'macos') {
     builderConfig.mac = {
-      target: [
-        { target: 'dmg', arch: ['x64', 'arm64'] },
-        { target: 'zip', arch: ['x64', 'arm64'] },
-      ],
+      target: ['dmg', 'zip'],
       icon: 'build/icon.icns',
       category: 'public.app-category.developer-tools',
       hardenedRuntime: true,
@@ -239,11 +236,18 @@ async function installStageDependencies() {
 
 async function buildRelease() {
   const electronBuilder = findElectronBuilder();
+  if (platformName === 'macos') {
+    // Serial passes prevent concurrent native rebuilds from sharing one staged node_modules tree.
+    const macTargets = [['--mac', '--x64'], ['--mac', '--arm64']];
+    for (const targetArguments of macTargets) {
+      await run(electronBuilder, ['--projectDir', stageDir, ...targetArguments]);
+    }
+    return;
+  }
+
   const platformArguments = platformName === 'windows'
     ? ['--win', 'portable', '--x64']
-    : platformName === 'macos'
-      ? ['--mac']
-      : ['--linux'];
+    : ['--linux'];
   await run(electronBuilder, ['--projectDir', stageDir, ...platformArguments]);
 }
 

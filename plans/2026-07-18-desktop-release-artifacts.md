@@ -94,6 +94,9 @@ unpacked application to contain the Web UI entrypoint and the rebuilt
 extensions to be present and non-empty. Run the host-compatible packaged
 Electron executable in Node mode and require an in-memory SQLite query to pass;
 on macOS, also validate the native-module architecture for every target.
+Build macOS x64 and arm64 serially in separate electron-builder processes so
+their native dependency rebuilds cannot race against the same staged
+`node_modules` tree.
 
 ## Task 4: Document Release Outputs
 
@@ -137,6 +140,8 @@ gh workflow run release-desktop.yml --repo aiis2/risk-agent --ref <branch>
 
 Wait for the run, inspect all three jobs, and list artifact names and sizes.
 Do not merge while any platform job fails or uploads no supported installer.
+On macOS, require the x64 package to contain an x86_64 SQLite module and the
+arm64 package to contain an arm64 module.
 
 ## Task 7: Review And Publish
 
