@@ -48,11 +48,13 @@ describe('desktop release workflow', () => {
     expect(releaseBuilder).not.toContain("from: 'node_modules/playwright-core'");
   });
 
-  it('packages each macOS architecture in an isolated builder pass', () => {
+  it('packages each macOS architecture from an isolated stage', () => {
     const releaseBuilder = readFileSync(releaseBuilderPath, 'utf8');
 
     expect(releaseBuilder).toContain("['--mac', '--x64']");
     expect(releaseBuilder).toContain("['--mac', '--arm64']");
+    expect(releaseBuilder).toContain('const architectureStageDir = `${stageDir}-${architecture}`');
+    expect(releaseBuilder).toContain('await cp(stageDir, architectureStageDir, { recursive: true })');
     expect(releaseBuilder).not.toContain("arch: ['x64', 'arm64']");
   });
 

@@ -162,11 +162,12 @@ on the runner host. This catches packages that electron-builder completed but
 that cannot serve the UI or open the embedded database at runtime.
 
 electron-builder rebuilds native dependencies in the staged `node_modules`
-tree. Building x64 and arm64 targets concurrently lets those rebuilds race,
-which can copy the arm64 SQLite binary into the x64 application. The macOS
-release builder therefore invokes electron-builder once per architecture in
-serial order. Each process finishes copying its unpacked application before
-the next process mutates the shared native module.
+tree and may hard-link those files into the unpacked application. Building x64
+and arm64 from one stage lets the later arm64 rebuild mutate the already-built
+x64 application through the shared inode, even when the builder processes run
+serially. The macOS release builder therefore copies the frozen production
+stage once per architecture, then invokes electron-builder serially against
+each independent tree.
 
 ## Error Handling And Rollback
 

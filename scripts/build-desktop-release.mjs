@@ -237,10 +237,16 @@ async function installStageDependencies() {
 async function buildRelease() {
   const electronBuilder = findElectronBuilder();
   if (platformName === 'macos') {
-    // Serial passes prevent concurrent native rebuilds from sharing one staged node_modules tree.
-    const macTargets = [['--mac', '--x64'], ['--mac', '--arm64']];
-    for (const targetArguments of macTargets) {
-      await run(electronBuilder, ['--projectDir', stageDir, ...targetArguments]);
+    const macTargets = [
+      { architecture: 'x64', targetArguments: ['--mac', '--x64'] },
+      { architecture: 'arm64', targetArguments: ['--mac', '--arm64'] },
+    ];
+    for (const { architecture, targetArguments } of macTargets) {
+      // electron-builder hard-links staged native modules into the app, so each arch needs its own inode tree.
+      const architectureStageDir = `${stageDir}-${architecture}`;
+      await rm(architectureStageDir, { recursive: true, force: true });
+      await cp(stageDir, architectureStageDir, { recursive: true });
+      await run(electronBuilder, ['--projectDir', architectureStageDir, ...targetArguments]);
     }
     return;
   }

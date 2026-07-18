@@ -94,9 +94,9 @@ unpacked application to contain the Web UI entrypoint and the rebuilt
 extensions to be present and non-empty. Run the host-compatible packaged
 Electron executable in Node mode and require an in-memory SQLite query to pass;
 on macOS, also validate the native-module architecture for every target.
-Build macOS x64 and arm64 serially in separate electron-builder processes so
-their native dependency rebuilds cannot race against the same staged
-`node_modules` tree.
+Build macOS x64 and arm64 serially from separate copies of the production stage
+so their native dependency rebuilds and hard-linked application files cannot
+share the same inode tree.
 
 ## Task 4: Document Release Outputs
 
