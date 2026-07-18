@@ -100,6 +100,16 @@ which would create an incomplete and misleading artifact bundle.
 `if-no-files-found` becomes `error`. This converts the core invariant from a
 best-effort warning into a release gate.
 
+### Native runner refinements
+
+The repository's `packageManager` field is the single pnpm version source; the
+setup action must not declare a second version. Packaging also uses separate
+signed and unsigned steps. Empty signing secrets are never exported as
+`CSC_LINK`, because electron-builder interprets that empty value as a local
+certificate path. Unsigned runs disable identity auto-discovery, while signed
+runs receive the configured credentials. The desktop package declares the
+repository homepage required by Linux package metadata.
+
 ### Reproducibility
 
 The install step changes from `--frozen-lockfile=false` to

@@ -27,12 +27,7 @@ jobs:
             package_command: pnpm build:linux
     runs-on: ${{ matrix.os }}
     env:
-      # 统一把 GitHub secrets 映射为 electron-builder 识别的变量
-      CSC_LINK: ${{ secrets.CSC_LINK }}
-      CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      SIGNING_ENABLED: ${{ secrets.CSC_LINK != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,11 +50,23 @@ jobs:
           pnpm --filter @risk-agent/web build
           pnpm --filter @risk-agent/desktop build
 
-      - name: Package desktop
+      - name: Package desktop (unsigned)
+        if: env.SIGNING_ENABLED != 'true'
         run: ${{ matrix.package_command }}
         env:
-          # electron-builder 会根据 CSC_LINK 自动决定是否签名
           DEBUG: electron-builder
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Package desktop (signed)
+        if: env.SIGNING_ENABLED == 'true'
+        run: ${{ matrix.package_command }}
+        env:
+          DEBUG: electron-builder
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
