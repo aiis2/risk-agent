@@ -8,6 +8,9 @@ describe('desktop release workflow', () => {
   const workflow = readFileSync(workflowPath, 'utf8');
 
   it('uses the reviewed dependency graph and builds every workspace package', () => {
+    const pnpmSetupBlock = workflow.match(/- name: Setup pnpm[\s\S]*?(?=\n\s+- name:)/)?.[0] ?? '';
+
+    expect(pnpmSetupBlock).not.toContain('version:');
     expect(workflow).toMatch(/^\s*run: pnpm install --frozen-lockfile\s*$/m);
     expect(workflow).not.toContain('--frozen-lockfile=false');
     expect(workflow).toContain('pnpm --filter @risk-agent/core build');
