@@ -1,5 +1,5 @@
 # ── Stage 1: 安装依赖 + 构建 ────────────────────────────────
-FROM node:20-alpine AS build
+FROM node:24-alpine AS build
 RUN apk add --no-cache python3 make g++ git
 WORKDIR /app
 # Copy everything first so pnpm workspace symlinks reference actual source
@@ -11,7 +11,7 @@ RUN corepack enable && corepack prepare pnpm@9 --activate \
     && pnpm --filter @risk-agent/server build
 
 # ── Stage 3: 最终运行镜像 ─────────────────────────────────────
-FROM node:20-alpine AS runtime
+FROM node:24-alpine AS runtime
 WORKDIR /app
 
 RUN apk add --no-cache \
