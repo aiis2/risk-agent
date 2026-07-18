@@ -45,6 +45,7 @@ describe('desktop release workflow', () => {
     expect(releaseBuilder).toContain("platformName === 'macos'");
     expect(releaseBuilder).toContain("platformName === 'linux'");
     expect(releaseBuilder).not.toContain("['install', '--omit=dev'");
+    expect(releaseBuilder).not.toContain("from: 'node_modules/playwright-core'");
   });
 
   it('keeps unsigned packaging separate from optional signing credentials', () => {

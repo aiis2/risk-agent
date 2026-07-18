@@ -131,6 +131,9 @@ graph rather than mutating resolution state during packaging. The native
 release builder follows the same rule by creating a minimal staged workspace
 and running `pnpm install --prod --frozen-lockfile
 --config.node-linker=hoisted`; it must not run a second lockless npm resolution.
+The staged MCP resource is copied once with its own compatible nested
+`playwright-core`; overlapping resource mappings are forbidden because Unix
+packagers reject duplicate destinations.
 The desktop's injected server dependency is refreshed offline after the server
 build so a clean install snapshots the generated `dist` entrypoint before the
 desktop typecheck and native packaging steps.

@@ -183,11 +183,6 @@ async function finalizeStagePackage() {
         to: 'playwright-mcp',
         filter: ['**', '!**/__tests__/**', '!**/test/**', '!**/.git/**'],
       },
-      {
-        from: 'node_modules/playwright-core',
-        to: 'playwright-mcp/node_modules/playwright-core',
-        filter: ['**', '!**/__tests__/**', '!**/test/**', '!**/.git/**'],
-      },
     ],
     asar: true,
     asarUnpack: ['**/*.node'],
