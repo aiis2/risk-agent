@@ -20,6 +20,7 @@ head. Do not branch from the specification branch or stale local `main`.
 ## Task 1: Add the offline installed-version contract
 
 **Files:**
+
 - Create: `packages/server/src/__tests__/runtimeDependencySecurity.spec.ts`
 - Inspect: `packages/server/package.json`
 - Inspect: `pnpm-lock.yaml`
@@ -65,6 +66,7 @@ Expected: two assertion failures because the frozen graph resolves Hono
 ## Task 2: Apply the targeted transitive updates
 
 **Files:**
+
 - Modify: `pnpm-lock.yaml`
 - Test: `packages/server/src/__tests__/runtimeDependencySecurity.spec.ts`
 
@@ -104,6 +106,7 @@ both installed packages on their patched major lines.
 ## Task 3: Verify security and repository behavior
 
 **Files:**
+
 - Verify: `pnpm-lock.yaml`
 - Verify: `packages/server/src/__tests__/runtimeDependencySecurity.spec.ts`
 - Update with evidence: `plans/2026-07-19-runtime-transport-security-design.md`
@@ -153,6 +156,7 @@ the reason and plan, and include `Closes #25`.
 ## Task 4: Prove the exact remote head and integrate
 
 **Files:**
+
 - Verify only: exact pushed implementation head
 
 **Step 1: Verify an isolated frozen checkout**
@@ -180,3 +184,20 @@ closes and `origin/main` advances.
 Remove temporary clones, worktrees, and local/remote cycle branches without
 touching the root worktree's pre-existing changes. Continue auditing the new
 `origin/main`; keep Fastify 5 and other advisory families as separate cycles.
+
+## Local execution evidence
+
+- RED: 2/2 focused cases failed on Hono 4.12.19 and ws 8.20.0 for the expected
+  version-floor assertions.
+- GREEN: Hono 4.12.31 and ws 8.21.1 resolve through their existing parents;
+  the focused contract passes 2/2.
+- Lock scope: 11 additions and 11 removals, with unrelated Babel and workspace
+  link normalization removed.
+- Audit: `7 high / 17 moderate / 5 low` became
+  `5 high / 8 moderate / 5 low`; Hono and ws scoped counts are zero.
+- Local gates: frozen install, offline frozen install, clean typecheck,
+  typecheck, lint, 102 files / 524 tests, workspace build, and diff checks pass.
+
+Exact pushed-head verification, independent review, and the three native
+release jobs remain integration gates and are recorded on the implementation
+PR rather than claimed by this local evidence section.
