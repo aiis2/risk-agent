@@ -170,3 +170,20 @@ that Hono and ws remain at zero.
 - Native desktop packages validate on Windows, macOS, and Linux.
 - No manifest, application source, registry, script, workflow, or unrelated
   lock graph changes.
+
+## Local implementation evidence
+
+The dependency contract produced two expected RED failures on the merged spec
+base: Hono 4.12.19 was below 4.12.25 and ws 8.20.0 was below 8.21.0. The
+targeted update selected Hono 4.12.31 and ws 8.21.1, after which both focused
+cases passed.
+
+The final lockfile diff contains 11 additions and 11 removals limited to the
+two package resolutions and their owning snapshot references. Generated Babel
+patch entries and workspace `file:` to `link:` normalization were excluded.
+
+The official-registry production audit changed from 7 high, 17 moderate, and
+5 low findings to 5 high, 8 moderate, and 5 low findings. Hono and ws have no
+remaining scoped advisories. Frozen install, a subsequent offline frozen
+install, clean typecheck, lint, 102 test files / 524 tests, and the workspace
+build pass in the implementation worktree.
