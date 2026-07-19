@@ -26,7 +26,7 @@
     "@xterm/xterm": "^6.0.0",
     "@xyflow/react": "^12.3.5",
     "autoprefixer": "^10.5.0",
-    "axios": "^1.6.7",
+    "axios": "^1.16.0",
     "clsx": "^2.1.1",
     "i18next": "^23.10.0",
     "jszip": "^3.10.1",

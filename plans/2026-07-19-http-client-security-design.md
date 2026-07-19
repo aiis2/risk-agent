@@ -157,3 +157,15 @@ criteria. Audit endpoint failure is a verification failure, not a clean audit.
 - Native desktop packages validate on Windows, macOS, and Linux.
 - No application source, unrelated manifest, registry setting, or release
   workflow changes.
+
+## Implementation evidence
+
+The targeted update resolves Axios 1.16.0, its patched FormData 4.0.6 graph,
+and core Undici 6.27.0. Unrelated Babel, Undici 7, and workspace-link changes
+produced by pnpm's initial re-resolution were excluded from the final
+lockfile.
+
+The official-registry production audit changed from 20 high, 27 moderate, and
+8 low findings to 7 high, 17 moderate, and 5 low findings. Axios and Undici
+have no remaining scoped advisories. Clean typecheck, lint, 101 test files / 522
+tests, and the workspace build pass on the implementation worktree.
