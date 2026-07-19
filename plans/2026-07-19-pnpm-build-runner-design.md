@@ -85,12 +85,13 @@ arguments to a log and exits successfully.
 The test starts the real `scripts/build.mjs` with:
 
 - `npm_execpath` pointing to the fake entry;
-- PATH reduced to the temporary directory, where no `pnpm` executable exists;
+- the temporary directory prepended to PATH with a trap `pnpm` executable that
+  fails if invoked;
 - an environment variable pointing to the invocation log.
 
-The current implementation fails because its independent PATH lookup cannot
-find pnpm. The corrected implementation succeeds and records exactly three
-calls in order:
+The current implementation fails because its independent PATH lookup invokes
+the trap. The corrected implementation ignores the conflicting PATH pnpm,
+succeeds, and records exactly three calls in order:
 
 1. `--filter @risk-agent/core build`
 2. `--filter @risk-agent/server build`
