@@ -23,16 +23,19 @@ In the test, create a temporary directory with `mkdtempSync`. Write an ESM
 script that appends `process.argv.slice(2)` as JSON to a log path supplied by
 the test environment.
 
-Remove all case variants of PATH from the inherited environment before adding
-a PATH that contains only the temporary directory. This prevents Windows from
-retaining a separate `Path` entry.
+Create a platform-appropriate `pnpm` trap in the temporary directory that
+prints an error and exits non-zero. Remove all case variants of PATH and
+`npm_execpath` from the inherited environment, then add one normalized entry
+for each. Prepend the temporary directory to PATH. This prevents Windows from
+retaining duplicate case-insensitive variables while preserving runtime tools
+required by the full test suite.
 
 **Step 2: Run the real build orchestrator**
 
-Use `spawnSync(process.execPath, [buildScriptPath])` with the isolated PATH,
-the fake script in `npm_execpath`, and captured UTF-8 output. Assert exit zero,
-three exact argument arrays in core/server/web order, and no `DEP0190` in
-stderr. Remove the temporary directory in `finally`.
+Use `spawnSync(process.execPath, [buildScriptPath])` with the trap directory
+first in PATH, the fake script in `npm_execpath`, and captured UTF-8 output.
+Assert exit zero, three exact argument arrays in core/server/web order, and no
+`DEP0190` in stderr. Remove the temporary directory in `finally`.
 
 **Step 3: Run the focused test to verify RED**
 
@@ -43,7 +46,7 @@ corepack pnpm exec vitest run packages/core/src/__tests__/buildScript.spec.ts
 ```
 
 Expected: FAIL because the current orchestrator ignores `npm_execpath`, looks
-up pnpm in the isolated PATH, and exits non-zero.
+up pnpm in PATH, invokes the trap, and exits non-zero.
 
 ### Task 2: Reuse the active lifecycle package manager
 
