@@ -9,10 +9,11 @@ import { publishStorageEvent, storageEventBus } from '../ws/storageEventBus.js';
 describe('websocket compatibility', () => {
   it('delivers storage events and removes the listener after disconnect', async () => {
     const dataDir = mkdtempSync(join(tmpdir(), 'risk-agent-ws-'));
-    const { app } = await buildApp({ dataDir, port: 0 });
-    let socket: Awaited<ReturnType<typeof app.injectWS>> | undefined;
+    let app: Awaited<ReturnType<typeof buildApp>>['app'] | undefined;
+    let socket: Awaited<ReturnType<NonNullable<typeof app>['injectWS']>> | undefined;
 
     try {
+      ({ app } = await buildApp({ dataDir, port: 0 }));
       await app.ready();
       const listenerBaseline = storageEventBus.listenerCount('storage_event');
 
@@ -35,12 +36,14 @@ describe('websocket compatibility', () => {
 
       expect(storageEventBus.listenerCount('storage_event')).toBe(listenerBaseline);
     } finally {
-      socket?.terminate();
-      await app.close();
       try {
-        rmSync(dataDir, { recursive: true, force: true });
-      } catch {
-        // Windows may briefly retain handles after the application closes.
+        socket?.terminate();
+      } finally {
+        try {
+          await app?.close();
+        } finally {
+          rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+        }
       }
     }
   });
