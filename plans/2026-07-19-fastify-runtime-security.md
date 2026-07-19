@@ -294,3 +294,32 @@ closes and `origin/main` advances.
 Remove temporary clones, worktrees, and local/remote cycle branches without
 touching the root worktree's pre-existing changes. Continue auditing the new
 `origin/main`; keep each remaining advisory family in a separate cycle.
+
+## Local execution evidence
+
+- RED: 17 new dependency cases failed on Fastify 4.29.1, CORS 9.0.1,
+  WebSocket 10.0.1, and fast-uri 2.4.0/3.1.0; the two existing Hono/ws cases
+  passed with no resolver error.
+- WebSocket baseline: the real `/api/ws/storage` round trip passed before the
+  migration, including listener registration and failure-safe cleanup.
+- GREEN: Fastify 5.10.0, CORS/WebSocket 11.3.0, fast-uri 3.1.4/4.1.1, and all
+  20 focused dependency/websocket cases pass after the migration.
+- Lock scope: the final diff retains only the three direct ranges and coherent
+  Fastify 5/runtime closure. Babel, Testing Library, `node-abi`, and injected
+  workspace normalization churn were removed; independent lock review found
+  no packaging or consistency issue.
+- Local gates: frozen install, clean typecheck, typecheck, lint,
+  103 test files / 542 tests, and the workspace build pass.
+- Timing diagnosis: one concurrent full-suite run timed out in the unrelated
+  Mermaid `ArtifactPanel` case; its focused 6/6 run and the next two complete
+  103-file / 542-test runs passed without any source change.
+- Clean reconstruction: after deleting generated `node_modules`,
+  `pnpm install --offline --frozen-lockfile` recreated 1,071 packages; clean
+  typecheck, 20 focused cases, and all 103 files / 542 tests passed.
+- Audit: `5 high / 8 moderate / 5 low` became
+  `0 high / 7 moderate / 4 low` across 654 production dependencies, with zero
+  Fastify/plugin/fast-uri records.
+
+Exact pushed-head verification, independent full-diff review, and the native
+Windows/macOS/Linux release jobs remain integration gates and are recorded on
+the implementation PR rather than claimed by this local evidence section.
