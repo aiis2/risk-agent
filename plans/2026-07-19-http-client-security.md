@@ -10,6 +10,13 @@
 
 ---
 
+## Implementation branch prerequisite
+
+Merge specification PR #23 before starting implementation. Fetch the resulting
+`origin/main`, verify it contains the merged specification, and create the
+implementation branch directly from that updated remote head. Do not branch
+from the specification branch or from a stale local `main`.
+
 ### Task 1: Add the offline dependency contract
 
 **Files:**
@@ -128,8 +135,8 @@ must remain unchanged.
 **Step 4: Commit and push**
 
 Create one English implementation commit that references the dependency
-security outcome, then push the implementation branch and open a draft PR that
-closes Issue #22.
+security outcome, then push the implementation branch. Open a draft PR
+targeting `main`, link merged specification PR #23, and include `Closes #22`.
 
 ### Task 4: Prove the exact remote head and integrate
 
