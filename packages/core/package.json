@@ -32,7 +32,7 @@
     "graphology-types": "^0.24.7",
     "pino": "^8.19.0",
     "simple-git": "^3.36.0",
-    "undici": "^6.11.0",
+    "undici": "^6.27.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

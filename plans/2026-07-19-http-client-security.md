@@ -111,7 +111,7 @@ git diff --check
 ```
 
 Expected: every command exits zero. The workspace reports 101 test files and
-521 tests if no concurrent upstream tests are added.
+522 tests if no concurrent upstream tests are added.
 
 **Step 2: Run the official-registry audit**
 
