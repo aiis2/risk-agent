@@ -17,13 +17,13 @@
     "db:import": "tsx src/cli/db.ts import"
   },
   "dependencies": {
-    "@fastify/cors": "^9.0.1",
-    "@fastify/websocket": "^10.0.1",
+    "@fastify/cors": "^11.3.0",
+    "@fastify/websocket": "^11.3.0",
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@playwright/mcp": "^0.0.71",
     "@risk-agent/core": "workspace:*",
     "cron-parser": "^5.5.0",
-    "fastify": "^4.26.0",
+    "fastify": "^5.10.0",
     "pino": "^8.19.0",
     "pino-pretty": "^10.3.0",
     "playwright": "^1.59.1",

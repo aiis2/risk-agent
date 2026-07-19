@@ -255,3 +255,40 @@ compare each retained node with the trial.
 - Native desktop packages validate on Windows, macOS, and Linux.
 - No unrelated Babel, workspace-link, source, registry, script, workflow, or
   dependency movement is included.
+
+## Local implementation evidence
+
+The dependency contract produced the expected RED result on the merged
+specification base: 17 new cases failed for Fastify 4.29.1, CORS 9.0.1,
+WebSocket 10.0.1, and fast-uri 2.4.0/3.1.0, while the existing Hono and ws
+cases passed. The real `/api/ws/storage` characterization also passed before
+the migration and proved listener registration, event delivery, awaited
+disconnect, and listener cleanup.
+
+The final graph declares Fastify `^5.10.0` and both plugins at `^11.3.0`.
+Frozen installs resolve Fastify 5.10.0, CORS/WebSocket 11.3.0, fast-uri 3.1.4
+through SDK/AJV/compiler paths, and fast-uri 4.1.1 through
+`fast-json-stringify@7.0.1`. All 20 focused dependency and websocket cases
+then pass.
+
+The generated lockfile was reduced to the coherent Fastify 5 closure. Babel
+7.29.7 additions, Testing Library reference changes, `node-abi` semver churn,
+and injected `@risk-agent/core` `file:` to `link:` normalization were removed.
+Independent lock review found no missing node, unrelated movement, or release
+packaging risk.
+
+Local gates pass: frozen install, clean typecheck, typecheck, lint,
+103 test files / 542 tests, and the workspace build. One concurrent full-suite
+run timed out in the pre-existing Mermaid-heavy `ArtifactPanel` case; that
+case passed 6/6 in isolation and the next two complete suite runs passed
+103/103 files and 542/542 tests without a code change.
+
+After deleting the implementation worktree's generated `node_modules`, an
+offline frozen install recreated 1,071 packages from the pnpm store. Clean
+typecheck, the 20 focused cases, and the complete 103-file / 542-test suite
+passed on that reconstructed install.
+
+The official-registry production audit changed from 5 high, 8 moderate, and
+5 low findings to 0 high, 7 moderate, and 4 low findings across 654 production
+dependencies. Fastify, `@fastify/cors`, `@fastify/websocket`, and fast-uri have
+zero scoped advisory records.
