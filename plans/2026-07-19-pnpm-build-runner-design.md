@@ -124,4 +124,3 @@ at the failing package. Signals or unknown statuses remain failures.
 - The orchestrator does not use a shell and emits no `DEP0190`.
 - Direct invocation fails with a clear `pnpm build` instruction.
 - Manifests, lockfile, production source, and release workflow are unchanged.
-
