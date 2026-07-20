@@ -510,3 +510,37 @@ delete the merged local and remote cycle branches, and verify the root still
 contains only its pre-existing `pnpm-workspace.yaml` change. Audit the new
 `origin/main` and continue with each residual advisory family in a separate
 Issue -> specification PR -> implementation PR cycle.
+
+## Local execution evidence
+
+- Boundary baseline: commit `a99f474` added one Mermaid application-boundary
+  characterization. `mermaidCleanup.spec.ts` passed 2/2 on
+  `mermaid@11.15.0 -> dompurify@3.4.5`, proving strict initialization,
+  normalized render input, returned SVG insertion, localized failure/fallback,
+  and scratch cleanup on both paths.
+- Dependency RED: commit `f546ac0` added the package-anchored security
+  contract. The resolver reached DOMPurify 3.4.5 through Mermaid and failed
+  only the 3.4.11 floor assertion with comparison result `-6`; Prettier, ESLint,
+  and web TypeScript compilation passed.
+- Dependency GREEN: commit `7eb7427` changed only `pnpm-lock.yaml`, with four
+  additions and four deletions across three hunks. Frozen pnpm 9 installation
+  resolves Mermaid 11.15.0 to DOMPurify 3.4.12. The contract passed 1/1 and
+  the focused set passed 5/5 files and 45/45 tests.
+- Local gates: frozen install, clean typecheck, typecheck, lint, all 104 files
+  / 544 tests, and the workspace build passed. Vite transformed 8,777 modules.
+- Timing diagnosis: one parallel-review full-suite run timed out in the
+  existing Mermaid-heavy `ArtifactPanel` case. Its focused 6/6 rerun and the
+  next serial 104/104-file / 544/544-test run passed without a code change.
+- Clean reconstruction: target validation succeeded, all five install paths
+  were absent after scoped long-path cleanup, and offline frozen install
+  recreated 1,071 packages. Clean typecheck, focused 5/45, and full 104/544
+  passed again with clean tracked status.
+- Audit: the official registry changed from 7 moderate / 4 low to 2 moderate /
+  1 low across 654 production dependencies, with zero critical, zero high,
+  and zero DOMPurify records. Residual findings belong to React Router,
+  js-yaml, and esbuild.
+
+Exact remote-head verification, independent complete-diff review, and native
+Windows/macOS/Linux release validation remain integration gates. Record their
+immutable SHA, review result, run ID, artifact sizes, and annotation counts on
+the implementation PR before marking it ready.

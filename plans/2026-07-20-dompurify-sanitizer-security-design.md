@@ -275,3 +275,54 @@ floor or remove existing assertions to make the graph pass.
 - Specification and implementation are delivered through separate reviewed
   PRs, each branched from its appropriate current `origin/main`; the spec PR
   is documentation-only and squash-merged before implementation starts.
+
+## Local implementation evidence
+
+The Mermaid application-boundary characterization passed on the vulnerable
+baseline before the lock refresh. Both cases in `mermaidCleanup.spec.ts`
+passed while the installed graph remained
+`mermaid@11.15.0 -> dompurify@3.4.5`. The new case proved strict
+initialization, normalized render input, returned SVG insertion, localized
+render failure, chart fallback, and scratch cleanup on success and failure.
+
+The package-anchored dependency contract then produced the required RED result
+on the same graph. It resolved DOMPurify through the web manifest and Mermaid
+manifest without a setup error, then failed only the security floor with:
+
+```text
+mermaid -> dompurify resolves dompurify@3.4.5, below 3.4.11
+expected -6 to be greater than or equal to 0
+```
+
+The final lock update changes four old and four new lines across three hunks:
+the DOMPurify package key/integrity, snapshot key, and Mermaid child reference.
+No manifest, production source, unrelated package, deprecation metadata,
+Testing Library, or workspace-link movement entered the graph. The repository
+package manager, pnpm 9.0.0, accepts the result with a frozen install and
+resolves `mermaid@11.15.0 -> dompurify@3.4.12`.
+
+After the refresh, the dependency contract passed 1/1 and the complete focused
+Mermaid set passed 5/5 files and 45/45 tests. Clean typecheck, typecheck, lint,
+the full 104-file / 544-test suite, and the workspace build passed. Vite
+transformed 8,777 modules.
+
+One independent full-suite run during parallel review activity timed out in
+the pre-existing Mermaid-heavy `ArtifactPanel` case. That file passed 6/6 in
+isolation, and the next serial complete run passed 104/104 files and 544/544
+tests without a code change. The timeout is recorded as timing evidence rather
+than hidden or treated as a DOMPurify behavior regression.
+
+For clean reconstruction, all five root/workspace `node_modules` paths were
+verified absent after target-scoped long-path cleanup. An offline frozen
+install recreated 1,071 packages from the pnpm store. Clean typecheck, focused
+5/45, and the complete 104/544 suite passed again, and the worktree remained
+clean.
+
+The official-registry production audit changed from 7 moderate and 4 low
+findings to 2 moderate and 1 low across 654 dependencies. DOMPurify changed
+from eight scoped records to zero; the residual modules are React Router,
+js-yaml, and esbuild.
+
+Exact pushed-head verification, independent full-diff review, and the native
+Windows/macOS/Linux release jobs remain integration gates and are recorded on
+the implementation PR rather than claimed by this local evidence section.
