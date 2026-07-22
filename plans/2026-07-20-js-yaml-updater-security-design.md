@@ -4,23 +4,30 @@
 
 Issue #34 records the production dependency audit baseline on
 `origin/main@ff45364af09bd0ece27942ff8e6bdd7df5d47911`. An offline frozen
-install and the complete 104-file / 544-test suite pass, while the official
-registry production audit reports 0 critical, 0 high, 2 moderate, and 1 low
-findings across 654 dependencies.
+install and the complete 104-file / 544-test suite pass. The initial audit
+snapshot reported 0 critical, 0 high, 2 moderate, and 1 low findings, but a
+fresh official-registry audit on 2026-07-22 reports 0 critical, 2 high, 12
+moderate, and 2 low findings across the same 654 dependencies. The live result
+contains 16 advisory records because new upstream advisories were published
+after Issue #34 was opened.
 
-One moderate record is GHSA-h67p-54hq-rp68 / CVE-2026-53550 on the installed
-desktop production path:
+Two records now belong to the installed desktop production path:
 
 ```text
 @risk-agent/desktop -> electron-updater@6.8.3 -> js-yaml@4.1.1
 ```
 
-The advisory describes quadratic merge-key processing through repeated YAML
-aliases. A package-anchored local reproduction against the exact installed
-transitive package showed the attack input rising from 43.1 ms at 12.9 KB to
+- GHSA-h67p-54hq-rp68 / CVE-2026-53550 is moderate, affects 4.1.1 through
+  repeated aliases in merge sequences, and is patched in 4.2.0.
+- GHSA-52cp-r559-cp3m / CVE-2026-59869 is high, affects every v4 release below
+  4.3.0 through chained merge mappings, and is patched in 4.3.0.
+
+A package-anchored local reproduction against the exact installed transitive
+package showed one quadratic merge pattern rising from 43.1 ms at 12.9 KB to
 952.0 ms at 54.9 KB, while similarly sized controls remained below 3.1 ms.
 This demonstrates the affected parser behavior without claiming that current
-release artifacts expose remote update metadata.
+release artifacts expose remote update metadata or that the local trial
+reproduces every upstream advisory variant.
 
 The application enables electron-updater only when Electron reports a
 packaged application and `resources/app-update.yml` exists. Both
@@ -44,7 +51,8 @@ running the complete lint, build, and native packaging gates.
 ## Goals
 
 - Resolve `@risk-agent/desktop -> electron-updater -> js-yaml` to a stable
-  version at or above the advisory-patched 4.2.0 floor and below 5.0.0.
+  version at or above the aggregate advisory-patched 4.3.0 floor and below
+  5.0.0.
 - Target the current `v4-legacy` release, js-yaml 4.3.0, without upgrading
   electron-updater or adding a direct dependency.
 - Remove every js-yaml record from the official production audit.
@@ -65,8 +73,8 @@ running the complete lint, build, and native packaging gates.
   workaround.
 - Migrating to js-yaml 5.
 - Adding a timing-sensitive performance test for the upstream advisory.
-- Fixing React Router, esbuild, or another independent advisory family in this
-  cycle.
+- Fixing Axios, Hono, body-parser, React Router, esbuild, or another
+  independent advisory family in this cycle.
 - Refactoring dependency security helpers across packages.
 
 ## Approaches considered
@@ -126,13 +134,14 @@ root-hoisted package or parsing `pnpm-lock.yaml` as text.
 The resulting version must be a stable `major.minor.patch` value satisfying:
 
 ```text
-4.2.0 <= electron-updater -> js-yaml < 5.0.0
+4.3.0 <= electron-updater -> js-yaml < 5.0.0
 ```
 
-The floor encodes the first patched v4 line rather than pinning 4.3.0 forever.
-The implementation intentionally installs 4.3.0 because it is the current v4
-legacy release. A later compatible v4 refresh remains valid, while a return
-to 4.1.1 or an unreviewed major upgrade fails offline.
+The floor encodes the aggregate patched v4 line for both current advisories.
+The implementation installs 4.3.0 because it is the first v4 release that
+clears both records and the current v4 legacy release. A later compatible v4
+refresh remains valid, while a return below 4.3.0 or an unreviewed major
+upgrade fails offline.
 
 ## TDD strategy
 
@@ -143,7 +152,7 @@ specification-merged base, the resolver must successfully reach:
 @risk-agent/desktop -> electron-updater@6.8.3 -> js-yaml@4.1.1
 ```
 
-The test must fail only because 4.1.1 is below 4.2.0. A package resolution,
+The test must fail only because 4.1.1 is below 4.3.0. A package resolution,
 manifest ownership, or version parsing error is not the required RED result.
 Commit and push that failing contract as an intermediate implementation
 commit.
@@ -220,10 +229,17 @@ corepack pnpm audit --prod --json --registry=https://registry.npmjs.org
 ```
 
 Parse the JSON even though the command exits non-zero for independent
-findings. Require zero critical, zero high, zero js-yaml records, and residual
-totals no worse than 1 moderate and 1 low. The expected remaining modules are
-React Router and esbuild. A stricter live result is acceptable with an
-explanation.
+findings. The 2026-07-22 live baseline is 0 critical, 2 high, 12 moderate, and
+2 low findings with 16 advisory records across 654 dependencies. js-yaml
+contributes one high and one moderate record. With no further registry change,
+the refresh is expected to leave at most 1 high, 11 moderate, and 2 low
+findings with zero js-yaml records. The residual modules are Axios, Hono,
+body-parser, React Router, and esbuild.
+
+Require zero critical and zero js-yaml records. A stricter live result is
+acceptable with an explanation. A worse result or a new unrelated advisory
+must be recorded against a fresh baseline rather than silently treated as a
+failure of this scoped lock refresh.
 
 A worse live result blocks completion until Issue #34 and both plans are
 updated and independently re-reviewed. A registry endpoint failure is not a
@@ -272,7 +288,7 @@ bounded dependency refresh.
 ## Acceptance criteria
 
 - The production updater path resolves a stable js-yaml version satisfying
-  `>=4.2.0 <5`, with 4.3.0 as the intended lock target.
+  `>=4.3.0 <5`, with 4.3.0 as the intended lock target.
 - The package-anchored contract fails on 4.1.1 for the expected floor
   assertion and passes unchanged after the targeted refresh.
 - electron-updater remains on 6.8.3 and every package manifest, application
@@ -280,8 +296,9 @@ bounded dependency refresh.
 - The lockfile contains one js-yaml 4.3.0 node, no js-yaml 4.1.1 node, and no
   unrelated package movement.
 - Existing desktop lifecycle and release coverage passes.
-- Official production audit reports 0 critical, 0 high, at most 1 moderate,
-  and at most 1 low, with zero js-yaml records.
+- With no newer registry advisory, the official production audit reports 0
+  critical, at most 1 high, at most 11 moderate, and at most 2 low findings,
+  with zero js-yaml records. Any live change is documented and re-reviewed.
 - Frozen install, offline reconstruction, clean typecheck, typecheck, lint,
   all 105 files / 545 tests, and the workspace build pass.
 - Exact remote-head verification is clean and reproducible.

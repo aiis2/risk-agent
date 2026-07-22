@@ -128,7 +128,7 @@ describe('desktop updater dependency security floor', () => {
     }
 
     const installedVersion = parseStableVersion(jsYamlManifest.version);
-    const floor: StableVersion = [4, 2, 0];
+    const floor: StableVersion = [4, 3, 0];
     const ceiling: StableVersion = [5, 0, 0];
 
     expect(
@@ -169,7 +169,7 @@ corepack pnpm exec vitest run packages/desktop/src/__tests__/runtimeDependencySe
 
 Expected: the resolver reaches
 `electron-updater@6.8.3 -> js-yaml@4.1.1`, then the test fails only because
-4.1.1 is below 4.2.0. A resolver, declaration, version syntax, or setup error
+4.1.1 is below 4.3.0. A resolver, declaration, version syntax, or setup error
 is not the required RED result.
 
 ### Step 4: Commit and push the RED contract
@@ -273,7 +273,7 @@ corepack pnpm exec vitest run packages/desktop/src/__tests__/runtimeDependencySe
 ```
 
 Expected: 1 passing test resolving a stable js-yaml 4.3.0 within
-`>=4.2.0 <5`.
+`>=4.3.0 <5`.
 
 ### Step 5: Run the focused desktop behavior set
 
@@ -398,20 +398,22 @@ corepack pnpm audit --prod --json --registry=https://registry.npmjs.org
 ```
 
 Parse the JSON despite the expected non-zero exit for independent findings.
-Require:
+The 2026-07-22 live baseline is 0 critical, 2 high, 12 moderate, and 2 low
+findings with 16 advisory records across 654 dependencies. js-yaml contributes
+one high and one moderate record. With no further registry change, require:
 
 ```text
 critical: 0
-high: 0
-moderate: <= 1
-low: <= 1
+high: <= 1
+moderate: <= 11
+low: <= 2
 js-yaml advisory records: 0
 production dependencies: explain any change from 654
 ```
 
-The expected residual modules are React Router and esbuild. A stricter result
-may pass with an explanation. A worse result blocks completion and requires
-updating Issue #34 and both plans before re-review.
+The expected residual modules are Axios, Hono, body-parser, React Router, and
+esbuild. A stricter result may pass with an explanation. A worse result or new
+advisory requires a fresh documented baseline and re-review before completion.
 
 ### Step 4: Verify implementation boundaries
 
