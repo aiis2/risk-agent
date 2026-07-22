@@ -571,6 +571,9 @@ target-scoped long-path fallback if Windows leaves generated files. Run
 `git worktree prune`, delete merged local cycle branches, and confirm the
 root still contains only its pre-existing `pnpm-workspace.yaml` change.
 
-Audit the resulting `origin/main`. Continue with React Router and then
-esbuild as separate Issue -> specification PR -> implementation PR cycles,
-subject to the fresh audit ranking.
+Audit the resulting `origin/main` and rank the next independent cycle by live
+severity, reachability, and change risk. The 2026-07-22 evidence places Axios,
+which owns the remaining high record, ahead of the moderate Hono and React
+Router records and the low body-parser and esbuild records. Deliver each
+selected family through its own Issue -> specification PR -> implementation
+PR cycle.
