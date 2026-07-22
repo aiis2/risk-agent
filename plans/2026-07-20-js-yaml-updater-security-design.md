@@ -308,3 +308,39 @@ bounded dependency refresh.
   PRs, each branched from the appropriate current `origin/main`; the
   specification PR is documentation-only and squash-merged before
   implementation starts.
+
+## Implementation evidence (2026-07-22)
+
+- The implementation branch started from the specification merge at
+  `origin/main@e69d50bd105b71bac6b727be61223526f7790ad9`. Before these
+  evidence updates, the branch changed only the desktop dependency contract
+  and `pnpm-lock.yaml`.
+- RED commit `114c62a` resolved
+  `electron-updater@6.8.3 -> js-yaml@4.1.1` and failed only on the intended
+  `4.3.0` floor assertion. GREEN commit `2c3525b` left the test unchanged and
+  resolved the same installed path to js-yaml 4.3.0.
+- The lock refresh contained nine hunks and exactly 10 additions / 10
+  deletions: one package and integrity replacement, seven existing parent
+  references, and one snapshot key. The existing `argparse@2.0.1` node,
+  parent versions, package manifests, application source, release
+  configuration, and workflows were unchanged.
+- A frozen install accepted the graph without rewriting the lockfile, and
+  `pnpm why` reported
+  `@risk-agent/desktop -> electron-updater@6.8.3 -> js-yaml@4.3.0`. The
+  focused desktop gate passed 3 files / 12 tests.
+- Serial clean typecheck, typecheck, lint, the complete 105-file / 545-test
+  suite, the workspace build, and diff checks passed. Vite transformed 8,777
+  modules during the successful build.
+- After exact worktree validation, only the five planned `node_modules`
+  paths were removed. The offline frozen reconstruction restored 1,071
+  packages with zero downloads, after which clean typecheck, typecheck, the
+  focused 3-file / 12-test gate, and the complete 105-file / 545-test suite
+  passed again.
+- The official production audit reported 0 critical, 1 high, 11 moderate,
+  and 2 low findings across 654 dependencies and 14 advisory records. It
+  contained zero js-yaml records. The residual records belong to Axios (10),
+  React Router (1), Hono (1), body-parser (1), and esbuild (1).
+- Independent review, immutable remote-head verification, and native
+  Windows, macOS, and Linux release validation remain integration gates and
+  will be recorded on the implementation PR without another repository
+  commit.
