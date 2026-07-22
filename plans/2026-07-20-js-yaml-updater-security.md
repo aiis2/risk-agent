@@ -577,3 +577,35 @@ which owns the remaining high record, ahead of the moderate Hono and React
 Router records and the low body-parser and esbuild records. Deliver each
 selected family through its own Issue -> specification PR -> implementation
 PR cycle.
+
+## Execution record (2026-07-22)
+
+- **Implementation base:**
+  `origin/main@e69d50bd105b71bac6b727be61223526f7790ad9`, the squash merge of
+  specification PR #35.
+- **Task 1 / RED:** commit `114c62a` added the desktop-owned installed-graph
+  contract. Prettier, ESLint, and typecheck passed. The focused test resolved
+  `electron-updater@6.8.3 -> js-yaml@4.1.1` and failed only because 4.1.1 was
+  below the 4.3.0 security floor.
+- **Task 2 / GREEN:** commit `2c3525b` replaced only the shared js-yaml node
+  and its seven parent references. The lock diff was nine hunks and 10
+  additions / 10 deletions, a frozen install accepted it, `pnpm why` resolved
+  js-yaml 4.3.0 through electron-updater, and the unchanged contract plus the
+  desktop lifecycle and release tests passed 3 files / 12 tests.
+- **Task 3 / repository gates:** clean typecheck, typecheck, lint, the full
+  105-file / 545-test suite, workspace build, and diff checks passed
+  sequentially. The branch contained no manifest, production source, release
+  configuration, workflow, parent-version, or unrelated lock movement.
+- **Task 3 / reconstruction:** exact-path cleanup removed only the five
+  planned install directories. `pnpm install --offline --frozen-lockfile`
+  restored 1,071 packages with zero downloads. Clean typecheck, typecheck,
+  the focused 3-file / 12-test gate, and all 105 files / 545 tests passed from
+  the reconstructed graph.
+- **Task 3 / audit:** the official registry returned 0 critical, 1 high, 11
+  moderate, and 2 low findings, 14 advisory records, and 654 production
+  dependencies. js-yaml had zero records. Residual modules were Axios, Hono,
+  body-parser, React Router, and esbuild.
+- **Task 4:** independent review, exact remote-head clone verification, and
+  native Windows, macOS, and Linux release validation are intentionally
+  pending until the final documentation commit is pushed and the draft
+  implementation PR is open.
