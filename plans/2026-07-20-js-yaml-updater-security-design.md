@@ -108,9 +108,9 @@ parents accept 4.3.0.
 
 Current artifacts do not expose channel metadata, so immediate exploitability
 is limited. Deferral would still retain a reproducibly quadratic parser in a
-production dependency and leave a known moderate finding ready to become
-reachable when publishing is configured. The compatible lock-only repair has
-lower long-term risk.
+production dependency and leave both the high and moderate records ready to
+become reachable when publishing is configured. The compatible lock-only
+repair has lower long-term risk.
 
 ## Dependency contract
 

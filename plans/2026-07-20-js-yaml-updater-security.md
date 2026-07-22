@@ -44,8 +44,7 @@ Use `apply_patch` to create the test with this complete structure:
 ```ts
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 interface PackageJson {
@@ -61,7 +60,7 @@ interface ResolvedPackage {
 
 type StableVersion = [number, number, number];
 
-const desktopManifestPath = fileURLToPath(new URL('../../package.json', import.meta.url));
+const desktopManifestPath = resolve(__dirname, '../../package.json');
 
 function readPackageJson(path: string): PackageJson {
   return JSON.parse(readFileSync(path, 'utf8')) as PackageJson;
