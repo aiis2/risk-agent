@@ -344,3 +344,29 @@ bounded dependency refresh.
   Windows, macOS, and Linux release validation remain integration gates and
   will be recorded on the implementation PR without another repository
   commit.
+
+## Integration audit refresh (2026-07-25)
+
+The first immutable-head verification froze
+`2f1c45ee6b671c402311d4971c6b2695095c933a`. Its frozen install, focused
+3-file / 12-test gate, clean typecheck, typecheck, lint, complete 105-file /
+545-test suite, and workspace build passed in the isolated clone.
+
+The official registry changed after the 2026-07-22 evidence was recorded.
+The exact-head audit reported 0 critical, 5 high, 14 moderate, and 2 low
+findings with 21 advisory records across the same 654 production
+dependencies. It still contained zero js-yaml records, so the scoped parser
+repair remained effective.
+
+Seven independent records explain the increase: two high PostCSS records,
+one high find-my-way record, one high builder-util-runtime record on the
+electron-updater path, two moderate react-router records, and one moderate
+react-router-dom record. They do not justify expanding this lock-only change
+into unrelated dependency upgrades.
+
+This worse live result activated the documented failure handling. Issue #34
+and both plans now record the fresh baseline. This documentation update
+invalidates the first frozen head; independent review, isolated exact-head
+verification, and native Windows, macOS, and Linux release validation must
+repeat against the new pushed commit. The next optimization must be ranked
+from the post-merge audit rather than the superseded 2026-07-22 totals.

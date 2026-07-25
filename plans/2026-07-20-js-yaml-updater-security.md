@@ -605,7 +605,19 @@ PR cycle.
   moderate, and 2 low findings, 14 advisory records, and 654 production
   dependencies. js-yaml had zero records. Residual modules were Axios, Hono,
   body-parser, React Router, and esbuild.
-- **Task 4:** independent review, exact remote-head clone verification, and
-  native Windows, macOS, and Linux release validation are intentionally
-  pending until the final documentation commit is pushed and the draft
-  implementation PR is open.
+- **Task 4 / first exact-head pass:** independent specification-compliance
+  and code-quality reviews found no issues. The frozen head
+  `2f1c45ee6b671c402311d4971c6b2695095c933a` passed isolated frozen install,
+  the focused 3-file / 12-test gate, clean typecheck, typecheck, lint, the
+  complete 105-file / 545-test suite, and workspace build.
+- **Task 4 / audit refresh:** on 2026-07-25 the official exact-head audit
+  returned 0 critical, 5 high, 14 moderate, and 2 low findings, 21 advisory
+  records, 654 production dependencies, and zero js-yaml records. The seven
+  new independent records were PostCSS (2 high), find-my-way (1 high),
+  builder-util-runtime (1 high), react-router (2 moderate), and
+  react-router-dom (1 moderate).
+- **Task 4 / restart:** the worse live baseline activated the planned failure
+  handling. Issue #34 and both plans were refreshed, invalidating the first
+  frozen head. After this documentation commit is pushed, independent review,
+  isolated exact-head verification, and native Windows, macOS, and Linux
+  validation must repeat before integration.
